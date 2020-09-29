@@ -1,6 +1,6 @@
 from django.db import models
 from django.apps import apps
-from django_eveonline_connector.services.static.utilities import resolve_type_name_to_type_id
+from django_eveonline_connector.utilities.static.universe import resolve_type_name_to_type_id
 
 
 import json, logging
