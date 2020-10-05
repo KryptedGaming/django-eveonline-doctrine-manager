@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-eveonline-doctrine-manager',
-    version='1.1.0',
+    version='1.2.0',
     packages=find_packages(),
     include_package_data=True,
     license='MIT License',
@@ -33,5 +33,7 @@ setup(
     ],
     install_requires=[
         'roman',
+        'django_eveonline_connector',
+        'django-crispy-forms'
     ]
 )

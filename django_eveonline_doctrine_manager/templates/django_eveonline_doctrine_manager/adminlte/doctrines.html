@@ -44,18 +44,15 @@ List Doctrines
 
 <script>
     $(function () {
-        $('table').DataTable({
-            'paging': false,
-            'lengthChange': false,
-            'searching': false,
-            'ordering': true,
-            'info': false,
-            'autoWidth': false,
-            'order': [[1, 'asc']],
-            'columnDefs': [
-                { 'orderable': false, 'targets': 0 }
-            ]
+            $('table').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'order': [[1, 'asc']],
+                'pageLength': 5,
+                "autoWidth": false,
+            })
         })
-    })
 </script>
 {% endblock %}

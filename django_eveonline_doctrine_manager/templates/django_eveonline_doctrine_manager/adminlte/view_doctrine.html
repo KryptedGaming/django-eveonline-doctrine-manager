@@ -120,18 +120,15 @@ Viewing Doctrine
 {% block scripts %}
 
 <script>
-    $(function () {
+   $(function () {
         $('table').DataTable({
-            'paging': false,
-            'lengthChange': false,
-            'searching': false,
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
             'ordering': true,
-            'info': false,
-            'autoWidth': false,
             'order': [[1, 'asc']],
-            'columnDefs': [
-                { 'orderable': false, 'targets': 0 }
-            ]
+            'pageLength': 5,
+            "autoWidth": false,
         })
     })
 </script>

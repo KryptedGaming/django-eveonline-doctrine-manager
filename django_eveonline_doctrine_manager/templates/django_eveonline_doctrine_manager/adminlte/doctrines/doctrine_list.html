@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block header %}
+Doctrines
+{% endblock %}
+
+{% block description %}
+View Doctrines
+{% endblock %}
+
+{% block content %}
+<div class="box box-info box-solid">
+    <div class="box-header">
+        <h3 class="box-title">Doctrines</h3>
+    </div>
+    <div class="box-body">
+        <div class="dataTables_wrapper form-inline dt-bootstrap">
+            <table class="table table-bordered table-striped dataTable">
+                <thead>
+                    <th class="col-lg-4 col-md-4 col-xs-2">Doctrine Name</th>
+                    <th class="col-lg-2 col-md-2 hidden-xs">Category</th>
+                    <th class="col-lg-4 col-md-4 hidden-xs">Ships</th>
+                    <th class="col-lg-2 col-md-2 col-xs-1">Actions</th>
+                </thead>
+                <tbody>
+                    {% for doctrine in object_list %}
+                    <tr>
+                        <td>{{doctrine.name}}</td>
+                        <td class="hidden-xs">{{doctrine.category}}</td>
+                        <td class="hidden-xs"></td>
+                        <td >
+                            <div style="display: flex;" class="btn-group btn-group-md">
+                                <i style="flex: 1;" class="btn btn-info fa fa-eye"></i>
+                                <i style="flex: 1;" class="btn btn-warning fa fa-pencil"></i>
+                                <i style="flex: 1;" class="btn btn-danger fa fa-times"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $.fn.DataTable.ext.pager.numbers_length = 5;
+    $(function () {
+        $('table').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': false,
+            'ordering': true,
+            'order': [[1, 'asc']],
+            'pageLength': 5,
+            "autoWidth": false,
+        })
+    })
+</script>
+
+{% endblock %}
