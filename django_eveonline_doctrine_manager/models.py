@@ -58,7 +58,7 @@ class EveFitting(EveDoctrineManagerBaseObject):
     # eve static info
     ship_id = models.IntegerField(editable=False, blank=True, null=True)
     # associations 
-    refit_of = models.ForeignKey("EveFitting", null=True, default=None, on_delete=models.CASCADE)
+    refit_of = models.ForeignKey("EveFitting", blank=True, null=True, default=None, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         self.ship_id = self.get_ship_id()

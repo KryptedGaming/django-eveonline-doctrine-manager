@@ -10,14 +10,17 @@ urlpatterns = []
 
 # Doctrines
 urlpatterns += [
-    path('doctrines/', views.view_doctrines,
-         name="django-eveonline-doctrine-manager-doctrines-list"),
-    path('doctrines/create/', doctrines.DoctrineCreate.as_view(),
+
+    path('doctrines/create/', doctrines.DoctrineCreateView.as_view(),
          name="django-eveonline-doctrine-manager-doctrines-create"),
-    path('doctrines/list/', doctrines.DoctrineListView.as_view(),
+    path('doctrines/', doctrines.DoctrineListView.as_view(),
          name="django-eveonline-doctrine-manager-doctrines-list"),
-    path('doctrines/<doctrine_id>/', views.view_doctrine,
-         name="django-eveonline-doctrine-manager-doctrines-view"),
+    path('doctrines/view/<int:id>/', doctrines.DoctrineDetailView.as_view(),
+         name="django-eveonline-doctrine-manager-doctrines-detail"),
+    path('doctrines/update/<int:id>/', doctrines.DoctrineUpdateView.as_view(),
+         name="django-eveonline-doctrine-manager-doctrines-update"),
+    path('doctrines/delete/<int:id>/', doctrines.DoctrineDeleteView.as_view(),
+         name="django-eveonline-doctrine-manager-doctrines-delete"),
 ]
 
 # Fittings

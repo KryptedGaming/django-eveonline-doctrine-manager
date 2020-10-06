@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block header %}
+View Doctrine
+{% endblock %}
+
+{% block description %}
+{{object.name}}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-info box-solid">
+            <div class="box-header">
+                <h3 class="box-title">Description</h3>
+            </div>
+            <div class="box-body">
+            <p>
+                {% autoescape off %}
+                {{object.description}}
+                {% endautoescape %}
+            </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="box box-primary box-solid">
+            <div class="box-header">
+                <h3 class="box-title">Skill Plans</h3>
+            </div>
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <table class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <th class="col-lg-1 col-md-1 col-xs-1"></th>
+                            <th class="col-lg-2 col-md-2 col-xs-2">Name</th>
+                            <th class="col-lg-4 col-md-4 col-xs-2">Role</th>
+                            <th class="col-lg-4 col-md-4 col-xs-2">Actions</th>
+                        </thead>
+                        <tbody>
+                            {% for skill_plan in object.skill_plans %}
+                            <tr>
+                                <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                                <td>{{skill_plan.name}}</td>
+                                <td>
+                                    {% for role in skill_plan.roles.all %}
+                                    <span class="badge badge-primary">{{role}}</span>
+                                    {% endfor %}
+                                </td>
+                                
+                                <td>
+                                    <div style="display: flex;" class="btn-group">
+                                        <a style="flex: 1;" class="btn btn-info fa fa-eye" href="#"></a>
+                                        <a style="flex: 1;" class="btn btn-warning fa fa-pencil" href="#"></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-success box-solid">
+            <div class="box-header">
+                <h3 class="box-title">Fittings</h3>
+            </div>
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <table class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <th class="col-lg-1 col-md-1 col-xs-1"></th>
+                            <th class="col-lg-3 col-md-3 col-xs-2">Fitting Name</th>
+                            <th class="col-lg-2 col-md-2 hidden-xs">Role</th>
+                            <th class="col-lg-2 col-md-2 hidden-xs">Skill Check</th>
+                            <th class="col-lg-3 col-md-3 col-xs-2">Actions</th>
+                        </thead>
+                        <tbody>
+                            {% for fitting in object.fittings %}
+                            <tr>
+                                <td class="text-center">
+                                    <img src="https://images.evetech.net/types/{{fitting.get_ship_id}}/icon?size=32" class="img-circle" alt="Avatar"
+                                        width="32px" title="{{character.character.name}}">
+                                <td>
+                                    
+                                    {{fitting.name}}
+                                </td>
+                                <td class="hidden-xs">
+                                    {% for role in fitting.roles.all %}
+                                    <span class="badge badge-primary">{{role}}</span>
+                                    {% endfor %}
+                                </td>
+                                <td class="hidden-xs">
+                                    <i class="fa fa-check text-success"></i>
+                                </td>
+                                <td>
+                                    <div style="display: flex;" class="btn-group">
+                                        <a style="flex: 1;" class="btn btn-info fa fa-eye" href="#"></a>
+                                        <a style="flex: 1;" class="btn btn-warning fa fa-pencil" href="#"></a>
+                                    </div>  
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $.fn.DataTable.ext.pager.numbers_length = 5;
+    $(function () {
+        $('table').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'order': [[1, 'asc']],
+            'pageLength': 5,
+            "autoWidth": false,
+        })
+    })
+</script>
+
+{% endblock %}

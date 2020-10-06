@@ -14,13 +14,16 @@ View Doctrines
         <h3 class="box-title">Doctrines</h3>
     </div>
     <div class="box-body">
+        <a class="btn btn-success pull-right" href="{% url 'django-eveonline-doctrine-manager-doctrines-create' %}">Create Doctrine</a>
         <div class="dataTables_wrapper form-inline dt-bootstrap">
+            
             <table class="table table-bordered table-striped dataTable">
                 <thead>
                     <th class="col-lg-4 col-md-4 col-xs-2">Doctrine Name</th>
                     <th class="col-lg-2 col-md-2 hidden-xs">Category</th>
                     <th class="col-lg-4 col-md-4 hidden-xs">Ships</th>
                     <th class="col-lg-2 col-md-2 col-xs-1">Actions</th>
+                    
                 </thead>
                 <tbody>
                     {% for doctrine in object_list %}
@@ -30,9 +33,9 @@ View Doctrines
                         <td class="hidden-xs"></td>
                         <td >
                             <div style="display: flex;" class="btn-group btn-group-md">
-                                <i style="flex: 1;" class="btn btn-info fa fa-eye"></i>
-                                <i style="flex: 1;" class="btn btn-warning fa fa-pencil"></i>
-                                <i style="flex: 1;" class="btn btn-danger fa fa-times"></i>
+                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' doctrine.pk %}" style="flex: 1;" class="btn btn-info fa fa-eye"></a>
+                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-update' doctrine.pk %}" style="flex: 1;" class="btn btn-warning fa fa-pencil"></a>
+                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-delete' doctrine.pk %}" style="flex: 1;" class="btn btn-danger fa fa-times"></a>
                             </div>
                         </td>
                     </tr>

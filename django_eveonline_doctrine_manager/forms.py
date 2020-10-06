@@ -7,6 +7,6 @@ class EveDoctrineForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         queryset=EveDoctrineManagerTag.objects.all(),
         required=False)
-    category = forms.ModelMultipleChoiceField(
+    category = forms.ModelChoiceField(
         queryset=EveDoctrineCategory.objects.all(),
         required=False)
