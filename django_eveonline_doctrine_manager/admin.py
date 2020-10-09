@@ -1,10 +1,11 @@
 from django.contrib import admin
+from django import forms
+from .models import *
+from django_singleton_admin.admin import DjangoSingletonModelAdmin
 
-from django.contrib import admin
-from .models import EveFitting, EveDoctrine, EveSkillPlan, EveFitCategory, EveDoctrineCategory
-
-admin.site.register(EveDoctrine)
+admin.site.register(EveDoctrineSettings, DjangoSingletonModelAdmin)
+admin.site.register(EveDoctrineRole)
+admin.site.register(EveDoctrineManagerTag)
+admin.site.register(EveDoctrineCategory)
 admin.site.register(EveFitting)
 admin.site.register(EveSkillPlan)
-admin.site.register(EveFitCategory)
-admin.site.register(EveDoctrineCategory)

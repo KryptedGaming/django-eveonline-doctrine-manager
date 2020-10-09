@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block header %}
+Doctrines
+{% endblock %}
+
+{% block description %}
+View Doctrines
+{% endblock %}
+
+{% block content %}
+<div class="box box-primary box-solid">
+    <div class="box-header">
+        <h3 class="box-title">Doctrines</h3>
+        <a class="btn pull-right" href="{% url 'django-eveonline-doctrine-manager-doctrines-create' %}">
+            <i class="fa fa-plus"></i>
+        </a>
+    </div>
+    <div class="box-body">
+        <div class="dataTables_wrapper form-inline dt-bootstrap">
+            
+            <table class="table table-bordered table-striped dataTable">
+                <thead>
+                    <th class="col-lg-2 col-md-2 col-xs-1">Name</th>
+                    <th class="col-lg-2 col-md-2 col-xs-2">Tags</th>
+                    <th class="col-lg-1 col-md-1 hidden-xs">Category</th>
+                    <th class="col-lg-4 col-md-4 hidden-xs">Ships</th>
+                    <th class="col-lg-2 col-md-2 col-xs-1">Actions</th>
+                    
+                </thead>
+                <tbody>
+                    {% for doctrine in object_list %}
+                    <tr>
+                        <td>
+                            <p>{{doctrine.name}}</p>
+                            
+                        </td>
+                        <td>
+                            {% for tag in doctrine.tags.all %}
+                            <span class="badge badge-primary">{{tag}}</span>
+                            {% endfor %}
+                        </td>
+                        <td class="hidden-xs">
+                            <span class="label label-{{doctrine.category.color}}">{{doctrine.category}}</span>
+                            
+                        </td>
+                        <td class="hidden-xs">
+                            {% for fitting in doctrine.fittings.all %}
+                            <img class="img-circle" src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32" title="{{fitting.get_ship_name}}" width="32px">
+                            {% endfor %}
+                        </td>
+                        <td >
+                            <div style="display: flex;" class="btn-group btn">
+                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' doctrine.pk %}" style="flex: 1;" class="btn btn-info fa fa-eye"></a>
+                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-update' doctrine.pk %}" style="flex: 1;" class="btn btn-warning fa fa-pencil"></a>
+                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-delete' doctrine.pk %}" style="flex: 1;" class="btn btn-danger fa fa-times"></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $.fn.DataTable.ext.pager.numbers_length = 5;
+    $(function () {
+        $('table').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'order': [[1, 'asc']],
+            'pageLength': 10,
+            "autoWidth": false,
+        })
+    })
+</script>
+
+{% endblock %}

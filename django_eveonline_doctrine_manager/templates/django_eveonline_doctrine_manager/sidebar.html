@@ -14,9 +14,15 @@
         <li><a href="#"><i class="fa fa-wrench"></i>No Access: Fittings</a></li>
         {% endif %}
         {% if perms.django_eveonline_doctrine_manager.view_evedoctrine %}
-        <li><a href="{% url 'django-eveonline-doctrine-manager-doctrines-list' %}"><i class="fa fa-rocket"></i>Doctrines</a></li>
+        <li><a href="{% url 'django-eveonline-doctrine-manager-doctrines-list' %}"><i class="fa fa-crosshairs"></i>Doctrines</a></li>
         {% else %}
         <li><a href="#"><i class="fa fa-rocket"></i>No Access: Doctrines</a></li>
+        {% endif %}
+        {% if perms.django_eveonline_doctrine_manager.view_eveskillplan %}
+        <li><a href="{% url 'django-eveonline-doctrine-manager-skillplans-list' %}"><i class="fa fa-book"></i>Skill Plans</a>
+        </li>
+        {% else %}
+        <li><a href="#"><i class="fa fa-rocket"></i>No Access: Skill Plans</a></li>
         {% endif %}
     </ul>
 
