@@ -14,7 +14,9 @@ urlpatterns += [
     path('api/hangarcheck', api.hangarcheck_utility, 
          name='django-eveonline-doctrine-manager-api-hangarcheck'),
     path('api/fitting', api.get_fitting, 
-         name='django-eveonline-doctrine-manager-api-get-fitting')
+         name='django-eveonline-doctrine-manager-api-get-fitting'),
+    path('api/characters/shipaudit', api.ship_audit,
+        name='django-eveonline-doctrine-manager-api-shipaudit'),
 ]
 
 # Doctrines

@@ -89,3 +89,76 @@ def get_fitting(request):
         return HttpResponse(status=400)
     fitting = EveFitting.objects.get(pk=request.GET['fitting_id']).parse_fitting()
     return JsonResponse(fitting)
+
+
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
+@permission_required('django_eveonline_doctrine_manager.view_evedoctrine', raise_exception=True)
+def ship_audit(request):
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+    else:
+        external_id = request.GET['external_id']
+    
+    response = {
+        'doctrines': [],
+        'fittings': [],
+        'skillplans': []
+    }
+
+    for doctrine in EveDoctrine.objects.all():
+        available_fittings = []
+        missing_fittings = []
+        for fitting in doctrine.fittings:
+            missing_skills = fitting.get_required_skills().get_missing_skills(external_id)
+            if not missing_skills:
+                response['fittings'].append({
+                    'name': fitting.name,
+                    'type_id': fitting.ship_id,
+                    'can_fly': True
+                })
+                available_fittings.append({
+                    'name': fitting.name,
+                    'type_id': fitting.ship_id,
+                })
+            else:
+                response['fittings'].append({
+                    'name': fitting.name,
+                    'type_id': fitting.ship_id,
+                    'can_fly': False
+                })
+                missing_fittings.append({
+                    'name': fitting.name,
+                    'type_id': fitting.ship_id,
+                })
+                    
+        if available_fittings:
+            response['doctrines'].append({
+                'name': doctrine.name,
+                'fittings': available_fittings,
+                'can_fly': True,
+            })
+        else:
+           response['doctrines'].append({
+               'name': doctrine.name,
+               'fittings': available_fittings,
+               'can_fly': False,
+           })
+
+
+
+    for skillplan in EveSkillPlan.objects.all():
+        missing_skills = skillplan.get_required_skills().get_missing_skills(external_id)
+        if missing_skills:
+            response['skillplans'].append({
+                'name': skillplan.name, 
+                'trained': False,
+                'missing_skills': [skill for skill in missing_skills ]
+            })
+        else:
+            response['skillplans'].append({
+                'name': skillplan.name, 
+                'trained': True 
+            })
+    
+    return JsonResponse(response)
