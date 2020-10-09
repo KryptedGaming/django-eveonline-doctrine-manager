@@ -34,6 +34,7 @@ setup(
     install_requires=[
         'roman',
         'django_eveonline_connector',
-        'django-crispy-forms'
+        'django-crispy-forms',
+        'django-singleton-admin-2',
     ]
 )

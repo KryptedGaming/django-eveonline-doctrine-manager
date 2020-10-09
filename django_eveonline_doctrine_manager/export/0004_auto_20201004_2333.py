@@ -4,8 +4,10 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 def clean_all_fittings(apps, schema_editor):
+    EveDoctrine = apps.get_model('django_eveonline_doctrine_manager', 'EveDoctrine')
     EveFitting = apps.get_model('django_eveonline_doctrine_manager', 'EveFitting')
     EveSkillPlan = apps.get_model('django_eveonline_doctrine_manager', 'EveSkillPlan')
+    EveDoctrine.objects.all().delete()
     EveFitting.objects.all().delete()
     EveSkillPlan.objects.all().delete()
 

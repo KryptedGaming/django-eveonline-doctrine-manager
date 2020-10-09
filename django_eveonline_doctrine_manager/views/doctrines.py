@@ -13,6 +13,12 @@ class DoctrineDetailView(DetailView):
     pk_url_kwarg = "id"
     model = EveDoctrine
 
+
+class DoctrineAuditView(DetailView):
+    template_name = 'django_eveonline_doctrine_manager/adminlte/doctrines/doctrine_audit.html'
+    pk_url_kwarg = "id"
+    model = EveDoctrine
+
 class DoctrineListView(ListView):
     template_name = 'django_eveonline_doctrine_manager/adminlte/doctrines/doctrine_list.html'
     model = EveDoctrine 
@@ -27,6 +33,7 @@ class DoctrineCreateView(FormView):
     def form_valid(self, form):
         doctrine = EveDoctrine.objects.create(
             name=form.cleaned_data['name'],
+            description=form.cleaned_data['description'],
             category=form.cleaned_data['category']
         )
         doctrine.tags.set(form.cleaned_data['tags'])

@@ -2,11 +2,16 @@
 
 {% block header %}
 View Doctrine
+<p id="{{request.user.info.get_primary_character.external_id}}" class="external-id" hidden></p>
+<a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " class="btn btn-warning pull-right">Character Audit</a> 
 {% endblock %}
 
 {% block description %}
 {{object.name}}
+
 {% endblock %}
+
+
 
 {% block content %}
 <div class="row">
@@ -32,28 +37,29 @@ View Doctrine
             </div>
             <div class="box-body">
                 <div class="dataTables_wrapper form-inline dt-bootstrap">
-                    <table class="table table-bordered table-striped dataTable">
+                    <table  class="table table-bordered table-striped dataTable">
                         <thead>
                             <th class="col-lg-1 col-md-1 col-xs-1"></th>
                             <th class="col-lg-2 col-md-2 col-xs-2">Name</th>
-                            <th class="col-lg-4 col-md-4 col-xs-2">Role</th>
-                            <th class="col-lg-4 col-md-4 col-xs-2">Actions</th>
+                            <th class="col-lg-1 col-md-1 col-xs-1">Role</th>
+                            <th class="col-lg-1 col-md-1 col-xs-1">Actions</th>
                         </thead>
                         <tbody>
                             {% for skill_plan in object.skill_plans %}
                             <tr>
-                                <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                                <td id="{{skill_plan.pk}}" class="skillplan text-center">
+                                    <i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>
+                                </td>
                                 <td>{{skill_plan.name}}</td>
                                 <td>
                                     {% for role in skill_plan.roles.all %}
-                                    <span class="badge badge-primary">{{role}}</span>
+                                    <span class="label label-{{role.color}}">{{role}}</span>
                                     {% endfor %}
                                 </td>
                                 
                                 <td>
                                     <div style="display: flex;" class="btn-group">
                                         <a style="flex: 1;" class="btn btn-info fa fa-eye" href="#"></a>
-                                        <a style="flex: 1;" class="btn btn-warning fa fa-pencil" href="#"></a>
                                     </div>
                                 </td>
                             </tr>
@@ -72,21 +78,20 @@ View Doctrine
             <div class="box-header">
                 <h3 class="box-title">Fittings</h3>
             </div>
-            <div class="box-body">
-                <div class="dataTables_wrapper form-inline dt-bootstrap">
+            <div id="{{object.pk}}" class="box-body doctrine-id">
+                <div  class="dataTables_wrapper form-inline dt-bootstrap">
                     <table class="table table-bordered table-striped dataTable">
                         <thead>
                             <th class="col-lg-1 col-md-1 col-xs-1"></th>
                             <th class="col-lg-3 col-md-3 col-xs-2">Fitting Name</th>
                             <th class="col-lg-2 col-md-2 hidden-xs">Role</th>
-                            <th class="col-lg-2 col-md-2 hidden-xs">Skill Check</th>
                             <th class="col-lg-3 col-md-3 col-xs-2">Actions</th>
                         </thead>
                         <tbody>
                             {% for fitting in object.fittings %}
                             <tr>
                                 <td class="text-center">
-                                    <img src="https://images.evetech.net/types/{{fitting.get_ship_id}}/icon?size=32" class="img-circle" alt="Avatar"
+                                    <img src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32" class="img-circle" alt="Avatar"
                                         width="32px" title="{{character.character.name}}">
                                 <td>
                                     
@@ -94,16 +99,12 @@ View Doctrine
                                 </td>
                                 <td class="hidden-xs">
                                     {% for role in fitting.roles.all %}
-                                    <span class="badge badge-primary">{{role}}</span>
+                                    <span class="label label-{{role.color}}">{{role}}</span>
                                     {% endfor %}
-                                </td>
-                                <td class="hidden-xs">
-                                    <i class="fa fa-check text-success"></i>
                                 </td>
                                 <td>
                                     <div style="display: flex;" class="btn-group">
-                                        <a style="flex: 1;" class="btn btn-info fa fa-eye" href="#"></a>
-                                        <a style="flex: 1;" class="btn btn-warning fa fa-pencil" href="#"></a>
+                                        <a style="flex: 1;" class="btn btn-info fa fa-eye" href="{% url 'django-eveonline-doctrine-manager-fittings-detail' fitting.pk %}"></a>
                                     </div>  
                                 </td>
                             </tr>
@@ -115,9 +116,6 @@ View Doctrine
         </div>
     </div>
 </div>
-
-
-
 {% endblock %}
 
 {% block scripts %}
@@ -136,4 +134,27 @@ View Doctrine
     })
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+    var primaryBox = document.querySelectorAll('.doctrine-id')
+    var externalId = document.querySelectorAll('.external-id')[0].id
+    var doctrineId = primaryBox[0].id
+    var skillPlanCheckObjects=document.querySelectorAll('.skillplan')
+
+
+    for (var i = 0; i < skillPlanCheckObjects.length; i++) {
+        const id = skillPlanCheckObjects[i].id
+        const res = await fetch('/eveonline/api/skillcheck?external_id=' + externalId + '&skillplan_id=' + id)
+        if (res.status == 204) {
+            skillPlanCheckObjects[i].innerHTML = '<i class="fa fa-check text-success"></i>'
+        }
+        else if (res.status == 200) {
+            skillPlanCheckObjects[i].innerHTML = '<i class="fa fa-times text-danger"></i>'
+        }
+        else {
+            skillPlanCheckObjects[i].innerHTML = 'Server Error'
+        }
+    }
+})
+</script>
 {% endblock %}
