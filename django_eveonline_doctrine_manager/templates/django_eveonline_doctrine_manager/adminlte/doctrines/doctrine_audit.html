@@ -75,34 +75,43 @@ Audit Doctrine
 </script>
 
 <script>
+    var processSkillCheckObject = async function(skillCheckObject, doctrineId) {
+        id = skillCheckObject.id.slice(2);
+        const res = await fetch('/eveonline/api/skillcheck?external_id=' + id + '&doctrine_id=' + doctrineId)
+        if (res.status == 200) {
+            skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
+        }
+        else {
+            skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
+        }
+    };
     document.addEventListener("DOMContentLoaded", async function () {
         var doctrineId = document.querySelectorAll('.doctrine-id')[0].id
         var skillCheckObjects = document.querySelectorAll('.skillcheck')
         var hangarCheckObjects = document.querySelectorAll('.hangarcheck')
 
-        for (var i = 0; i < skillCheckObjects.length; i++) {
-            const id = skillCheckObjects[i].id.slice(2)
+        skillCheckObjects.forEach(async skillCheckObject => {
+            const id = skillCheckObject.id.slice(2);
             const res = await fetch('/eveonline/api/skillcheck?external_id=' + id + '&doctrine_id=' + doctrineId)
-            const resJSON = await res.json()
-            if (resJSON['ships'].length > 0) {
-                skillCheckObjects[i].innerHTML = '<i class="fa fa-check text-success"></i>'
+            if (res.status == 200) {
+                skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
             else {
-                skillCheckObjects[i].innerHTML = '<i class="fa fa-times text-danger"></i>'
+                skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
             }
 
-        }
+        });
 
-        for (var i = 0; i < hangarCheckObjects.length; i++) {
-            const id = hangarCheckObjects[i].id.slice(2)
+        hangarCheckObjects.forEach(async hangarCheckObject => {
+            const id = hangarCheckObject.id.slice(2)
             const res = await fetch('/eveonline/api/hangarcheck?external_id=' + id + '&doctrine_id=' + doctrineId)
             if (res.status == 204) {
-                hangarCheckObjects[i].innerHTML = '<i class="fa fa-check text-success"></i>'
+                hangarCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
             else {
-                hangarCheckObjects[i].innerHTML = '<i class="fa fa-times text-danger"></i>'
+                hangarCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
             }
-        }
+        });
     })
 </script>
 {% endblock %}
