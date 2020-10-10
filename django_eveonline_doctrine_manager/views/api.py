@@ -10,8 +10,8 @@ from django.views.decorators.cache import cache_page
 import json, logging 
 
 
-@permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
 @cache_page(60 * 15)
+@permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
 def skillcheck_utility(request):
     external_id = None 
     fitting = None 
@@ -50,13 +50,10 @@ def skillcheck_utility(request):
         available_fittings = []
         for fitting in doctrine.fittings:
             if not fitting.get_required_skills().get_missing_skills(external_id):
-                available_fittings.append(fitting.pk)
-        if len(available_fittings) > 0:
-            return JsonResponse({
-                'ships': available_fittings
+                return JsonResponse({
+                    'ships': available_fittings
                 }, status=200)
-        else:
-            return HttpResponse(status=204)
+        return HttpResponse(status=204)
 
 
 @permission_required('django_eveonline_connector.view_eveasset', raise_exception=True)
@@ -64,6 +61,8 @@ def skillcheck_utility(request):
 def hangarcheck_utility(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
+    if not EveDoctrineSettings.objects.all().count() > 0:
+        return HttpResponse(status=500)
     if not EveDoctrineSettings.get_instance().staging_structure:
         return HttpResponse(status=500)
     else:
