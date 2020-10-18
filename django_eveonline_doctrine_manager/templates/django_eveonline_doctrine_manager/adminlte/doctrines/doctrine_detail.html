@@ -3,7 +3,9 @@
 {% block header %}
 View Doctrine
 <p id="{{request.user.info.get_primary_character.external_id}}" class="external-id" hidden></p>
+{% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
 <a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " class="btn btn-warning pull-right">Character Audit</a> 
+{% endif %}
 {% endblock %}
 
 {% block description %}

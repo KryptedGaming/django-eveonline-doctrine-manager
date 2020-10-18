@@ -15,9 +15,11 @@ View Fittings
         <h3 class="box-title">
             Fitting Table
         </h3>
+        {% if perms.django_eveonline_doctrine_manager.add_evefitting %}
         <a class="btn pull-right" href="{% url 'django-eveonline-doctrine-manager-fittings-create' %}">
             <i class="fa fa-plus"></i>
         </a>
+        {% endif %}
     </div>
     <div class="box-body">
         <div class="dataTables_wrapper form-inline dt-bootstrap">
@@ -50,8 +52,12 @@ View Fittings
                         <td >
                             <div style="display: flex;" class="btn-group btn-group-md">
                                 <a href="{% url 'django-eveonline-doctrine-manager-fittings-detail' fitting.pk %}" style="flex: 1;" class="btn btn-info fa fa-eye"></a>
+                                {% if perms.django_eveonline_doctrine_manager.change_evefitting %}
                                 <a href="{% url 'django-eveonline-doctrine-manager-fittings-update' fitting.pk %}" style="flex: 1;" class="btn btn-warning fa fa-pencil"></a>
+                                {% endif %}
+                                {% if perms.django_eveonline_doctrine_manager.delete_evefitting %}
                                 <a href="{% url 'django-eveonline-doctrine-manager-fittings-delete' fitting.pk %}" style="flex: 1;" class="btn btn-danger fa fa-times"></a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

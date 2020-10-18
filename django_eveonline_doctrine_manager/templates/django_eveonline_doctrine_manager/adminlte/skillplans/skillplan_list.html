@@ -15,9 +15,11 @@ View Fittings
         <h3 class="box-title">
             Skillplan Table
         </h3>
+        {% if perms.django_eveonline_doctrine_manager.add_eveskillplan %}
         <a class="btn pull-right" href="{% url 'django-eveonline-doctrine-manager-skillplans-create' %}">
             <i class="fa fa-plus"></i>
         </a>
+        {% endif %}
     </div>
     <div class="box-body">
         <div class="dataTables_wrapper form-inline dt-bootstrap">
@@ -46,8 +48,12 @@ View Fittings
                         <td >
                             <div style="display: flex;" class="btn-group btn-group-md">
                                 <a href="{% url 'django-eveonline-doctrine-manager-skillplans-detail' skillplan.pk %}" style="flex: 1;" class="btn btn-info fa fa-eye"></a>
+                                {% if perms.django_eveonline_doctrine_manager.change_eveskillplan %}
                                 <a href="{% url 'django-eveonline-doctrine-manager-skillplans-update' skillplan.pk %}" style="flex: 1;" class="btn btn-warning fa fa-pencil"></a>
+                                {% endif %}
+                                {% if perms.django_eveonline_doctrine_manager.delete_eveskillplan %}
                                 <a href="{% url 'django-eveonline-doctrine-manager-skillplans-delete' skillplan.pk %}" style="flex: 1;" class="btn btn-danger fa fa-times"></a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

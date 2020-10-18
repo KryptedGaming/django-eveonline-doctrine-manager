@@ -12,9 +12,11 @@ View Doctrines
 <div class="box box-primary box-solid">
     <div class="box-header">
         <h3 class="box-title">Doctrines</h3>
+        {% if perms.django_eveonline_doctrine_manager.add_evedoctrine %}
         <a class="btn pull-right" href="{% url 'django-eveonline-doctrine-manager-doctrines-create' %}">
             <i class="fa fa-plus"></i>
         </a>
+        {% endif %}
     </div>
     <div class="box-body">
         <div class="dataTables_wrapper form-inline dt-bootstrap">
@@ -51,9 +53,26 @@ View Doctrines
                         </td>
                         <td >
                             <div style="display: flex;" class="btn-group btn">
-                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' doctrine.pk %}" style="flex: 1;" class="btn btn-info fa fa-eye"></a>
-                                <a href="{% url 'django-eveonline-doctrine-manager-doctrines-update' doctrine.pk %}" style="flex: 1;" class="btn btn-warning fa fa-pencil"></a>
+                                <a 
+                                    href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' doctrine.pk %}" 
+                                    style="flex: 1;" 
+                                    class="btn btn-info fa fa-eye">
+                                    {% if not perms.django_eveonline_doctrine_manager.view_evedoctrine %}
+                                    disabled
+                                    {% endif %}
+                                </a>
+
+                                {% if perms.django_eveonline_doctrine_manager.change_evedoctrine %}
+                                <a 
+                                    href="{% url 'django-eveonline-doctrine-manager-doctrines-update' doctrine.pk %}" 
+                                    style="flex: 1;" 
+                                    class="btn btn-warning fa fa-pencil">        
+                                </a>
+                                {% endif %}
+
+                                {% if perms.django_eveonline_doctrine_manager.delete_evedoctrine %}
                                 <a href="{% url 'django-eveonline-doctrine-manager-doctrines-delete' doctrine.pk %}" style="flex: 1;" class="btn btn-danger fa fa-times"></a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

@@ -48,7 +48,7 @@ class EveSkillPlanForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         queryset=EveDoctrineManagerTag.objects.all(),
         required=False)
-    role = forms.ModelChoiceField(
+    roles = forms.ModelMultipleChoiceField(
         queryset=EveDoctrineRole.objects.all(),
         required=False)
 
