@@ -2,15 +2,107 @@ from django.db import models
 from django.apps import apps
 from django_eveonline_connector.models import EveAsset
 from django_eveonline_doctrine_manager.utilities.abstractions import EveSkillList
-from django_eveonline_doctrine_manager.models import EveFitting, EveSkillPlan, EveDoctrineSettings, EveDoctrine
+from django_eveonline_doctrine_manager.models import EveFitting, EveSkillPlan, EveDoctrineSettings, EveDoctrine, EveCharacterDoctrineReport
+from django_eveonline_connector.models import EveCharacter
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import permission_required, login_required
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_page
+from django_eveonline_doctrine_manager.tasks import generate_character_report as generate_character_report_task
 import json, logging 
+logger = logging.getLogger(__name__)
 
 
-@cache_page(60 * 15)
+@login_required
+@permission_required("django_eveonline_doctrine_manager.create_evecharacterdoctrinereport")
+@cache_page(60*5)
+def generate_character_report(request):
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+    else:
+        character_id = request.GET['external_id']
+
+    generate_character_report_task(character_id)
+    return HttpResponse(status=204)
+    
+    
+
+
+@login_required
+@permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
+@permission_required('django_eveonline_connector.view_eveasset', raise_exception=True)
+@permission_required('django_eveonline_doctrine_manager.view_evedoctrine', raise_exception=True)
+def get_character_report(request):
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+    
+    character_report = EveCharacterDoctrineReport.objects.filter(character__external_id=request.GET['external_id']).first()
+    if not character_report:
+        return HttpResponse(status=404)
+
+    return JsonResponse(character_report.get_report())
+
+@login_required
+def get_character_fittings(request):
+    user = request.user 
+
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+
+    try:
+        character = EveCharacter.objects.get(external_id=request.GET['external_id'])
+        report = character.evecharacterdoctrinereport.get_report()['fittings']
+    except Exception as e:
+        logger.warning(e)
+        return HttpResponse(status=404)
+
+    if user.has_perm("django_eveonline_doctrine_manager.view_evecharacterdoctrinereport") or character.token.user == user:
+        fittings = [] 
+        for fitting_key in report:
+            fitting_data = report[fitting_key]
+            fitting_data['fitting_pk'] = fitting_key
+            fittings.append(fitting_data)
+        return JsonResponse({
+            "fittings": fittings
+        },safe=False)
+
+    else:
+        return HttpResponse(status=403)
+
+
+@login_required
+def get_character_doctrines(request):
+    user = request.user
+
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+
+    try:
+        character = EveCharacter.objects.get(
+            external_id=request.GET['external_id'])
+        report = character.evecharacterdoctrinereport.get_report()['doctrines']
+    except Exception as e:
+        logger.warning(e)
+        return HttpResponse(status=404)
+
+    if user.has_perm("django_eveonline_doctrine_manager.view_evecharacterdoctrinereport") or character.token.user == user:
+        objects = []
+        for pk in report:
+            data = report[pk]
+            doctrine = EveDoctrine.objects.get(pk=pk)
+            objects.append({
+                "doctrine_pk": doctrine.pk,
+                "name": doctrine.name, 
+                "has_skills": len(data['skill_ready_fittings']) > 0,
+            })
+        return JsonResponse({
+            "doctrines": objects,
+        }, safe=False)
+
+    else:
+        return HttpResponse(status=403)
+
+
 @permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
 def skillcheck_utility(request):
     external_id = None 
@@ -30,34 +122,51 @@ def skillcheck_utility(request):
     else:
         return HttpResponse(status=400)
 
-    if fitting:
-        missing_skills = fitting.get_required_skills().get_missing_skills(external_id)
-        if missing_skills:
-            return JsonResponse({
-                'missing_skills': missing_skills
-            }, status=200)
-        else:
-            return HttpResponse(status=204)
-    elif skillplan:
-        missing_skills = skillplan.get_required_skills().get_missing_skills(external_id)
-        if missing_skills:
-            return JsonResponse({
-                'missing_skills': missing_skills
-            }, status=200)
-        else:
-            return HttpResponse(status=204)
+    character_report = EveCharacterDoctrineReport.objects.filter(
+        character__external_id=request.GET['external_id']).first()
+    
+    if not character_report:
+        return HttpResponse(status=500)
     else:
-        available_fittings = []
-        for fitting in doctrine.fittings:
-            if not fitting.get_required_skills().get_missing_skills(external_id):
-                return JsonResponse({
-                    'ships': available_fittings
-                }, status=200)
+        character_report = character_report.get_report()
+
+    if fitting:
+        if fitting.pk not in character_report['fittings']:
+            return HttpResponse(status=500)
+        
+        missing_skills = character_report['fittings'][fitting.pk].missing_skills
+
+        if missing_skills:
+            return JsonResponse({
+                'missing_skills': missing_skills
+            }, status=200)
+        else:
+            return HttpResponse(status=204)
+
+    elif skillplan:
+        if skillplan.pk not in character_report['skillplans']:
+            return HttpResponse(status=500)
+        missing_skills = character_report['skillplans'][skillplan.pk].missing_skills
+        if missing_skills:
+            return JsonResponse({
+                'missing_skills': missing_skills
+            }, status=200)
+        else:
+            return HttpResponse(status=204)
+    elif doctrine:
+        if str(doctrine.pk) not in character_report['doctrines']:
+            return HttpResponse(status=404)
+        
+        available_fittings = character_report['doctrines'][str(doctrine.pk)]['skill_ready_fittings']
+
+        if available_fittings:
+            return JsonResponse({
+                'ships': available_fittings
+            }, status=200)
         return HttpResponse(status=204)
 
 
 @permission_required('django_eveonline_connector.view_eveasset', raise_exception=True)
-@cache_page(60 * 15)
 def hangarcheck_utility(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -67,19 +176,33 @@ def hangarcheck_utility(request):
         return HttpResponse(status=500)
     else:
         location_id = EveDoctrineSettings.get_instance().staging_structure.structure_id
+
+    character_report = EveCharacterDoctrineReport.objects.filter(
+        character__external_id=request.GET['external_id']).first()
+    if not character_report:
+        return HttpResponse(status=400)
+
+    character_report = character_report.get_report()
+
     if 'fitting_id' in request.GET:
         fitting = EveFitting.objects.get(pk=request.GET['fitting_id'])
-        if EveAsset.objects.filter(type_id=fitting.ship_id, location_id=location_id, entity__external_id=request.GET['external_id']).exists():
+        if fitting.pk not in character_report['fittings']:
+            return HttpResponse(status=400)
+        
+        if character_report['fittings'][fitting.pk]['in_hangar'] == True:
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=404)
+
     if 'doctrine_id' in request.GET:
-        doctrine = EveDoctrine.objects.get(pk=request.GET['doctrine_id'])
-        type_ids = [fitting.ship_id for fitting in doctrine.fittings]
-        if EveAsset.objects.filter(type_id__in=type_ids, location_id=location_id, entity__external_id=request.GET['external_id']).exists():
+        doctrine = request.GET['doctrine_id']
+        if doctrine not in character_report['doctrines']:
+            return HttpResponse(status=500)
+        
+        if character_report['doctrines'][doctrine]['hangar_ready_fittings']:
             return HttpResponse(status=204)
         else:
-            return HttpResponse(status=404)
+            return JsonResponse(character_report)
 
 
 @permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
@@ -88,76 +211,3 @@ def get_fitting(request):
         return HttpResponse(status=400)
     fitting = EveFitting.objects.get(pk=request.GET['fitting_id']).parse_fitting()
     return JsonResponse(fitting)
-
-
-@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_doctrine_manager.view_evefitting', raise_exception=True)
-@permission_required('django_eveonline_doctrine_manager.view_evedoctrine', raise_exception=True)
-def ship_audit(request):
-    if 'external_id' not in request.GET:
-        return HttpResponse(status=400)
-    else:
-        external_id = request.GET['external_id']
-    
-    response = {
-        'doctrines': [],
-        'fittings': [],
-        'skillplans': []
-    }
-
-    for doctrine in EveDoctrine.objects.all():
-        available_fittings = []
-        missing_fittings = []
-        for fitting in doctrine.fittings:
-            missing_skills = fitting.get_required_skills().get_missing_skills(external_id)
-            if not missing_skills:
-                response['fittings'].append({
-                    'name': fitting.name,
-                    'type_id': fitting.ship_id,
-                    'can_fly': True
-                })
-                available_fittings.append({
-                    'name': fitting.name,
-                    'type_id': fitting.ship_id,
-                })
-            else:
-                response['fittings'].append({
-                    'name': fitting.name,
-                    'type_id': fitting.ship_id,
-                    'can_fly': False
-                })
-                missing_fittings.append({
-                    'name': fitting.name,
-                    'type_id': fitting.ship_id,
-                })
-                    
-        if available_fittings:
-            response['doctrines'].append({
-                'name': doctrine.name,
-                'fittings': available_fittings,
-                'can_fly': True,
-            })
-        else:
-           response['doctrines'].append({
-               'name': doctrine.name,
-               'fittings': available_fittings,
-               'can_fly': False,
-           })
-
-
-
-    for skillplan in EveSkillPlan.objects.all():
-        missing_skills = skillplan.get_required_skills().get_missing_skills(external_id)
-        if missing_skills:
-            response['skillplans'].append({
-                'name': skillplan.name, 
-                'trained': False,
-                'missing_skills': [skill for skill in missing_skills ]
-            })
-        else:
-            response['skillplans'].append({
-                'name': skillplan.name, 
-                'trained': True 
-            })
-    
-    return JsonResponse(response)

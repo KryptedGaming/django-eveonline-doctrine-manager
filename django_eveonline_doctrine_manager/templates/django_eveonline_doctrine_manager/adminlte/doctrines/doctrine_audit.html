@@ -79,9 +79,14 @@ Audit Doctrine
         id = skillCheckObject.id.slice(2);
         const res = await fetch('/eveonline/api/skillcheck?external_id=' + id + '&doctrine_id=' + doctrineId)
         if (res.status == 200) {
-            skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
+            skillCheckObject.innerHTML = '<i title="Character has the required skills" class="fa fa-check text-success"></i>'
+        }
+        else if (res.status == 500) {
+            skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
         }
         else {
+            const resJSON = await res.json();
+            console.log(resJSON)
             skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
         }
     };
@@ -96,6 +101,9 @@ Audit Doctrine
             if (res.status == 200) {
                 skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
+            else if (res.status == 500) {
+                skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
+            }
             else {
                 skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
             }
@@ -107,6 +115,9 @@ Audit Doctrine
             const res = await fetch('/eveonline/api/hangarcheck?external_id=' + id + '&doctrine_id=' + doctrineId)
             if (res.status == 204) {
                 hangarCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
+            }
+            else if (res.status == 500) {
+                hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
             }
             else {
                 hangarCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'

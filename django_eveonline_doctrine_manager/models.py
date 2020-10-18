@@ -216,6 +216,9 @@ class EveSkillPlan(models.Model):
     doctrines = models.ManyToManyField("EveDoctrine", blank=True)
     roles = models.ManyToManyField("EveDoctrineRole", blank=True)
 
+    def save(self, *args, **kwargs):
+        super(EveSkillPlan, self).save(*args, **kwargs)
+
     def get_required_skills(self):
         cleaned_skill_list = []
         # clean skills from "SKILL V" format to "SKILL 1"
@@ -267,3 +270,57 @@ class EveDoctrineManagerTag(models.Model):
         return self.name
 
 
+"""
+Reports
+"""
+class EveCharacterDoctrineReport(models.Model):
+    """
+    JSON report in the following format:
+        {
+            doctrines: [ Object doctrine (see below)],
+            fittings: [ Object fitting (see below)],
+            skillplans: [ Object skillplan (see below)],
+        }
+
+    Object formats
+        doctrine: {
+            "name": string, 
+            skill_ready_fittings: [],
+            hangar_ready_fittings: [],
+        }
+
+        fitting: {
+            name: string, 
+            type_name: string
+            type_id: int
+            missing_skills: {},
+            in_hangar: bool
+        }
+
+        skillplan: {
+            name: string,
+            missing_skills: {},
+        }
+    """
+    character = models.OneToOneField(EveCharacter, on_delete=models.CASCADE)
+    data = models.TextField()
+
+    # def save(self, *args, **kwargs):
+    #     self.data = json.dumps(self.data)
+    #     super(EveCharacterDoctrineReport, self).save(*args, **kwargs)
+
+    def reset(self):
+        self.data = json.dumps({
+            "doctrines": {},
+            "fittings": {},
+            "skillplans": {}
+        })
+        self.save()
+        return self
+
+    def save_report(self, report):
+        self.data = json.dumps(report, sort_keys=True, indent=4)
+        self.save()
+
+    def get_report(self):
+        return dict(json.loads(self.data))

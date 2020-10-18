@@ -9,14 +9,20 @@ from django_eveonline_doctrine_manager.views import api, doctrines, fittings, sk
 urlpatterns = []
 
 urlpatterns += [
+    path('api/report/generate', api.generate_character_report, 
+        name="django-eveonline-doctrine-manager-api-generate-character-report"),
+    path('api/report/doctrines', api.get_character_report,
+         name='django-eveonline-doctrine-manager-api-report-doctrines'),
+    path('api/doctrines', api.get_character_doctrines,
+         name='django-eveonline-doctrine-manager-api-get-doctrines'),
+    path('api/fittings', api.get_character_fittings,
+         name='django-eveonline-doctrine-manager-api-get-fittings'),
     path('api/skillcheck', api.skillcheck_utility, 
         name='django-eveonline-doctrine-manager-api-skillcheck'),
     path('api/hangarcheck', api.hangarcheck_utility, 
          name='django-eveonline-doctrine-manager-api-hangarcheck'),
     path('api/fitting', api.get_fitting, 
          name='django-eveonline-doctrine-manager-api-get-fitting'),
-    path('api/characters/shipaudit', api.ship_audit,
-        name='django-eveonline-doctrine-manager-api-shipaudit'),
 ]
 
 # Doctrines
