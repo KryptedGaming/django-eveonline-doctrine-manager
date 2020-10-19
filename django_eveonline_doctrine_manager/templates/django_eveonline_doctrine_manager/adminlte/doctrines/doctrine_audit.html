@@ -24,6 +24,7 @@ Audit Doctrine
                         <thead>
                             <th class="col-lg-1 col-md-1 col-xs-1"></th>
                             <th class="col-lg-3 col-md-3 col-xs-2">Character Name</th>
+                            <th class="col-lg-3 col-md-3 col-xs-2">Corporation</th>
                             <th class="col-lg-2 col-md-2 hidden-xs">Skill Check</th>
                             <th class="col-lg-2 col-md-2 hidden-xs">Hangar Check</th>
                         </thead>
@@ -36,7 +37,10 @@ Audit Doctrine
                                         title="{{character.character.name}}">
                                 </td>
                                 <td>
-                                    {{character.name}}
+                                    <a href="{% url 'django-eveonline-connector-view-character' character.external_id %}">{{character.name}}</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'django-eveonline-connector-view-corporation' character.corporation.external_id %}">{{character.corporation.name}}</a>
                                 </td>
                                 <td id="s_{{character.external_id}}" class="skillcheck">
                                     <i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>
