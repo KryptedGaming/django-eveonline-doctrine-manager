@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import permission_required
 from django_eveonline_doctrine_manager.views import old as views
-from django_eveonline_doctrine_manager.views import api, doctrines, fittings, skillplans
+from django_eveonline_doctrine_manager.views import api, doctrines, fittings, skillplans, seeding
 
 urlpatterns = []
 
@@ -94,6 +94,18 @@ urlpatterns += [
         permission_required('django_eveonline_doctrine_manager.delete_evefitting', raise_exception=True)
         (fittings.FittingDeleteView.as_view()),
         name="django-eveonline-doctrine-manager-fittings-delete"),
+    
+    path('fittings/market/',
+         permission_required(
+             'django_eveonline_doctrine_manager.view_evefittingmarketrule', raise_exception=True)
+         (seeding.FittingMarketRuleListView.as_view()),
+         name="django-eveonline-doctrine-manager-fittings-market"),
+
+    path('fittings/market/stock/',
+         permission_required(
+             'django_eveonline_doctrine_manager.view_evefittingmarketrule', raise_exception=True)
+         (seeding.update_stock),
+         name="django-eveonline-doctrine-manager-fittings-stock"),
 ]
 
 # Skillplans
@@ -130,11 +142,6 @@ urlpatterns += [
 ]
 
 # SRP
-urlpatterns += [
-
-]
-
-# Seeding 
 urlpatterns += [
 
 ]

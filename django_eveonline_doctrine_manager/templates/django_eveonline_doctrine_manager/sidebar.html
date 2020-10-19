@@ -24,6 +24,12 @@
         {% else %}
         <li><a href="#"><i class="fa fa-rocket"></i>No Access: Skill Plans</a></li>
         {% endif %}
+        {% if perms.django_eveonline_doctrine_manager.view_evefittingmarketrule %}
+        <li><a href="{% url 'django-eveonline-doctrine-manager-fittings-market' %}"><i class="fa fa-usd"></i>Seeding</a>
+        </li>
+        {% else %}
+        <li><a href="#"><i class="fa fa-rocket"></i>No Access: Seeding</a></li>
+        {% endif %}
     </ul>
 
 </li>

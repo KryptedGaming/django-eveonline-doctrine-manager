@@ -1,6 +1,6 @@
 from django.db import models
 from django.apps import apps
-from django_eveonline_connector.models import EveStructure, EveEntity, EveCharacter
+from django_eveonline_connector.models import EveStructure, EveEntity, EveCharacter, EveContract
 from django_eveonline_connector.utilities.static.universe import resolve_type_name_to_type_id, get_type_id_prerq_skill_ids, get_prerequisite_skills, resolve_type_id_to_type_name, resolve_type_id_to_category_name
 from django_eveonline_doctrine_manager.utilities.abstractions import EveSkillList
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -36,6 +36,7 @@ def get_skill_names_from_static_dump():
 class EveDoctrineSettings(DjangoSingleton):
     staging_structure = models.OneToOneField(EveStructure, on_delete=models.SET_NULL, null=True, blank=True)
     contract_entity = models.OneToOneField(EveEntity, on_delete=models.SET_NULL, null=True, blank=True)
+    seeding_contract_prefix = models.CharField(max_length=12, blank=True, null=True, default=None)
     seeding_enabled = models.BooleanField(default=False)
 
     @staticmethod
@@ -43,8 +44,8 @@ class EveDoctrineSettings(DjangoSingleton):
         return EveDoctrineSettings.objects.all()[0]
 
     class Meta:
-        verbose_name = "Eve Doctrine Settings"
-        verbose_name_plural = "Eve Doctrine Settings"
+        verbose_name = "Doctrine Settings"
+        verbose_name_plural = "Doctrine Settings"
 
 """
 Core models
@@ -73,7 +74,6 @@ class EveDoctrine(models.Model):
 
     def __str__(self):
         return self.name
-
     
 class EveFitting(models.Model):
     name = models.CharField(max_length=32)
@@ -132,6 +132,23 @@ class EveFitting(models.Model):
                     skill_list.add_skill(prerq_skill)
 
         return skill_list  
+
+    @property
+    def market_paste(self):
+        fitting = self.parse_fitting()
+        fitting_paste = []
+        exclude_keys = ['ship']
+        fitting_paste.append(self.get_ship_name())
+        for key in fitting:
+            if key in exclude_keys:
+                continue
+            for module in fitting[key]:
+                name = module['type_name']
+                quantity = module['quantity']
+                if not quantity:
+                    quantity = 1
+                fitting_paste.append(f"{name} x{quantity}")
+        return "\n".join(fitting_paste)
 
     def parse_fitting(self):
         fit = {
@@ -234,6 +251,27 @@ class EveSkillPlan(models.Model):
     def __str__(self):
         return self.name    
 
+class EveFittingMarketRule(models.Model):
+    fitting = models.OneToOneField(EveFitting, on_delete=models.CASCADE)
+    requested_stock = models.IntegerField()
+    structure = models.ForeignKey(EveStructure, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"<{self.requested_stock} {self.fitting.name} @ {self.structure.name}>"
+
+    @property 
+    def required_name(self):
+        prefix = EveDoctrineSettings.get_instance().seeding_contract_prefix
+        if prefix:
+            title = prefix + self.fitting.name
+        else:
+            title = self.fitting.name
+        return title 
+
+    @property
+    def current_stock(self):
+        title=self.required_name
+        return EveContract.objects.filter(end_location_id=self.structure.structure_id, title=title).count()
 
 """
 Grouping models
