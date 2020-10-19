@@ -16,10 +16,14 @@ class DjangoEveOnlineDoctrineManagerConfig(AppConfig):
                 raise Exception(f"Missing '{requirement}' in INSTALLED_APPS")
 
         if apps.is_installed('packagebinder'):
-            from packagebinder.bind import BindObject
-            bind = BindObject(self.package_name, self.version)
+            from packagebinder.exceptions import BindException
+            try:
+                bind = apps.get_app_config('packagebinder').get_bind_object(
+                    self.package_name, self.version)
+            except BindException as e:
+                return
             # Required Task Bindings
-            bind.add_required_task(
+            bind.add_optional_task(
                 name="EVE: Generate Doctrine Reports",
                 task="django_eveonline_doctrine_manager.tasks.update_character_reports",
                 interval=1,

@@ -6,7 +6,7 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
+    atomic = False
     dependencies = [
         ('django_eveonline_doctrine_manager', '0003_auto_20191217_2241'),
     ]
