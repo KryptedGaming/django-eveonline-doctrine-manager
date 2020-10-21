@@ -7,7 +7,7 @@
 
 __title__ = 'EVE Online Doctrine Manager'
 __package_name__ = 'django-eveonline-doctrine-manager'
-__version__ = '1.2.4'
+__version__ = '1.2.5'
 __author__ = 'Krypted Gaming'
 __license__ = 'MIT License'
 __copyright__ = 'Copyright © 2017-2020 Krypted Gaming. All rights reserved.'
