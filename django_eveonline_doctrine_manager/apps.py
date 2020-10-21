@@ -20,13 +20,16 @@ class DjangoEveOnlineDoctrineManagerConfig(AppConfig):
             try:
                 bind = apps.get_app_config('packagebinder').get_bind_object(
                     self.package_name, self.version)
+                bind.add_optional_task(
+                    name="EVE: Generate Doctrine Reports",
+                    task="django_eveonline_doctrine_manager.tasks.update_character_reports",
+                    interval=1,
+                    interval_period="days",
+                )
+                bind.save()
+
             except BindException as e:
+                print(e)
                 return
             # Required Task Bindings
-            bind.add_optional_task(
-                name="EVE: Generate Doctrine Reports",
-                task="django_eveonline_doctrine_manager.tasks.update_character_reports",
-                interval=1,
-                interval_period="days",
-            )
-            bind.save()
+            
