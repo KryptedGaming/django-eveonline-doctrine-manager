@@ -22,33 +22,39 @@ View Fittings
         {% endif %}
     </div>
     <div class="box-body">
+        
         <div class="dataTables_wrapper form-inline dt-bootstrap">
             
             <table class="table table-bordered table-striped dataTable">
                 <thead>
                     <th class="col-lg-1 col-md-1 col-xs-2"></th>
+                    <th class="col-lg-1 col-md-1 hidden-xs">Roles</th>
                     <th class="col-lg-3 col-md-3 col-xs-2">Fitting Name</th>
-                    <th class="col-lg-3 col-md-3 hidden-xs">Tags</th>
-                    <th class="col-lg-3 col-md-3 hidden-xs">Roles</th>
-                    <th class="col-lg-2 col-md-2 col-xs-2">Actions</th>
                     
+                    <th class="col-lg-2 col-md-2 col-xs-2">Actions</th>
                 </thead>
                 <tbody>
                     {% for fitting in object_list %}
                     <tr>
                         <td class="text-center"><img class="img-circle" src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32"
-                                title="{{fitting.get_ship_name}}" width="32px"></td>
-                        <td>{{fitting.name}}</td>
-                        <td class="hidden-xs">
-                            {% for tag in fitting.tags.all %}
-                            <span class="badge badge-primary">{{tag}}</span>
-                            {% endfor %}
-                        </td>
+                                title="{{fitting.get_ship_name}}" width="32px">
+                            </td>
                         <td class="hidden-xs">
                             {% for role in fitting.roles.all %}
-                            <span class="badge badge-primary">{{role}}</span>
+                            <span class="label label-{{role.color}}">
+                            {{role}}
+                            </span>
                             {% endfor %}
                         </td>
+                        <td>
+                            <h4 class="pull-left">
+                                {{fitting.name}}
+                            </h4>
+                            {% for tag in fitting.tags.all %}
+                            <span class="badge badge-primary pull-right">{{tag}}</span>
+                            {% endfor %}
+                        </td>
+                        
                         <td >
                             <div style="display: flex;" class="btn-group btn-group-md">
                                 <a href="{% url 'django-eveonline-doctrine-manager-fittings-detail' fitting.pk %}" style="flex: 1;" class="btn btn-info fa fa-eye"></a>
