@@ -9,7 +9,8 @@ from django_eveonline_doctrine_manager.models import (EveDoctrineManagerTag,
 
 class EveDoctrineForm(forms.Form):
     name = forms.CharField(max_length=32, required=True)
-    description = forms.CharField(widget=forms.Textarea)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': "wysihtml5"}))
     tags = forms.ModelMultipleChoiceField(
         queryset=EveDoctrineManagerTag.objects.all(),
         required=False)
@@ -19,15 +20,17 @@ class EveDoctrineForm(forms.Form):
 
 class EveFittingForm(forms.Form):
     name = forms.CharField(max_length=32, required=True)
-    description = forms.CharField(widget=forms.Textarea)
-    fitting = forms.CharField(widget=forms.Textarea)
+    fitting = forms.CharField(widget=forms.Textarea, required=True)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': "wysihtml5"}), required=False)
+    
     refit_of = forms.ModelChoiceField(
         queryset=EveFitting.objects.all(),
         required=False
     )
     doctrines = forms.ModelMultipleChoiceField(
         queryset=EveDoctrine.objects.all(),
-        required=True
+        required=False
     )
     tags = forms.ModelMultipleChoiceField(
         queryset=EveDoctrineManagerTag.objects.all(),
@@ -39,11 +42,13 @@ class EveFittingForm(forms.Form):
 
 class EveSkillPlanForm(forms.Form):
     name = forms.CharField(max_length=32, required=True)
-    description = forms.CharField(widget=forms.Textarea)
-    skills = forms.CharField(widget=forms.Textarea)
+    skills = forms.CharField(widget=forms.Textarea, required=True)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': "wysihtml5"}), required=False)
+    
     doctrines = forms.ModelMultipleChoiceField(
         queryset=EveDoctrine.objects.all(),
-        required=True
+        required=False
     )
     tags = forms.ModelMultipleChoiceField(
         queryset=EveDoctrineManagerTag.objects.all(),
