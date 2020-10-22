@@ -20,9 +20,9 @@ class EveDoctrineForm(forms.Form):
 
 class EveFittingForm(forms.Form):
     name = forms.CharField(max_length=32, required=True)
-    fitting = forms.CharField(widget=forms.Textarea, required=True)
     description = forms.CharField(
         widget=forms.Textarea(attrs={'class': "wysihtml5"}), required=False)
+    fitting = forms.CharField(widget=forms.Textarea, required=True)
     
     refit_of = forms.ModelChoiceField(
         queryset=EveFitting.objects.all(),

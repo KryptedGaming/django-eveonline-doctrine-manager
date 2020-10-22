@@ -126,13 +126,13 @@ def skillcheck_utility(request):
         character__external_id=request.GET['external_id']).first()
     
     if not character_report:
-        return HttpResponse(status=500)
+        return HttpResponse(status=400)
     else:
         character_report = character_report.get_report()
 
     if fitting:
         if fitting.pk not in character_report['fittings']:
-            return HttpResponse(status=500)
+            return HttpResponse(status=400)
         
         missing_skills = character_report['fittings'][fitting.pk].missing_skills
 
@@ -145,7 +145,7 @@ def skillcheck_utility(request):
 
     elif skillplan:
         if skillplan.pk not in character_report['skillplans']:
-            return HttpResponse(status=500)
+            return HttpResponse(status=400)
         missing_skills = character_report['skillplans'][skillplan.pk].missing_skills
         if missing_skills:
             return JsonResponse({
@@ -171,9 +171,9 @@ def hangarcheck_utility(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
     if not EveDoctrineSettings.objects.all().count() > 0:
-        return HttpResponse(status=500)
+        return HttpResponse(status=400)
     if not EveDoctrineSettings.get_instance().staging_structure:
-        return HttpResponse(status=500)
+        return HttpResponse(status=400)
     else:
         location_id = EveDoctrineSettings.get_instance().staging_structure.structure_id
 
@@ -197,7 +197,7 @@ def hangarcheck_utility(request):
     if 'doctrine_id' in request.GET:
         doctrine = request.GET['doctrine_id']
         if doctrine not in character_report['doctrines']:
-            return HttpResponse(status=500)
+            return HttpResponse(status=400)
         
         if character_report['doctrines'][doctrine]['hangar_ready_fittings']:
             return HttpResponse(status=204)

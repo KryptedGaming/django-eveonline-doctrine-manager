@@ -77,11 +77,11 @@ class EveDoctrine(models.Model):
     
 class EveFitting(models.Model):
     name = models.CharField(max_length=32)
+    fitting = models.TextField()  # eft format
     description = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField("EveDoctrineManagerTag", blank=True)
     doctrines = models.ManyToManyField("EveDoctrine", blank=True)
     roles = models.ManyToManyField("EveDoctrineRole", blank=True)
-    fitting = models.TextField()  # eft format
     # eve static info
     ship_id = models.IntegerField(editable=False, blank=True, null=True)
     # associations 

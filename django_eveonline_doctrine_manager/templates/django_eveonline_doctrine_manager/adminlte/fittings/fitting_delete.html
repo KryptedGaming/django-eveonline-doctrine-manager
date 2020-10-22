@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block header %}
-Delete Doctrine
+Delete Fitting
 {% endblock %}
 
 {% block description %}
@@ -16,10 +16,12 @@ Delete Doctrine
             <h3>Are you sure?</h3>
         </div>
         <div class="box-body">
-            
                 <p>You are about to delete this fitting, this cannot be undone.</p>
-                <button class="btn btn-warning" type="submit">Confirm</button>
-            
+                
+        </div>
+        <div class="box-footer">
+            <button class="btn btn-default" onclick="window.history.back();">Cancel</button>
+            <button class="btn btn-danger" type="submit">Confirm</button>
         </div>
     </div>
 </form>

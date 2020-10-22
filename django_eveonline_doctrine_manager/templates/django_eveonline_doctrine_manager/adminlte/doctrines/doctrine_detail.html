@@ -3,9 +3,22 @@
 {% block header %}
 View Doctrine
 <p id="{{request.user.info.get_primary_character.external_id}}" class="external-id" hidden></p>
-{% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
-<a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " class="btn btn-warning pull-right">Character Audit</a> 
-{% endif %}
+<div class="btn-group pull-right">
+    {% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
+    <a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " style="flex: 1;"
+        class="btn btn-info fa fa-user-secret"></a>
+    {% endif %}
+    {% if perms.django_eveonline_doctrine_manager.change_evedoctrine %}
+    <a href="{% url 'django-eveonline-doctrine-manager-doctrines-update' object.pk %}" style="flex: 1;"
+        class="btn btn-warning fa fa-pencil">
+    </a>
+    {% endif %}
+    
+    {% if perms.django_eveonline_doctrine_manager.delete_evedoctrine %}
+    <a href="{% url 'django-eveonline-doctrine-manager-doctrines-delete' object.pk %}" style="flex: 1;"
+        class="btn btn-danger fa fa-times"></a>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block description %}
@@ -23,11 +36,25 @@ View Doctrine
                 <h3 class="box-title">Description</h3>
             </div>
             <div class="box-body">
+            {% if object.description %}
             <p>
                 {% autoescape off %}
                 {{object.description}}
                 {% endautoescape %}
             </p>
+            {% else %}
+            <p>No description set.</p>
+            {% endif %}
+            </div>
+            <div class="box-footer">
+            {% if object.tags.all %}
+            <p>
+                Tags:
+                {% for tag in object.tags.all %}
+                <span class="badge badge-primary">{{tag}}</span>
+                {% endfor %}
+            </p>
+            {% endif %}
             </div>
         </div>
     </div>
