@@ -105,7 +105,7 @@ Audit Doctrine
             if (res.status == 200) {
                 skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
-            else if (res.status == 500) {
+            else if (res.status == 400) {
                 skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
             }
             else {
@@ -120,7 +120,7 @@ Audit Doctrine
             if (res.status == 204) {
                 hangarCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
-            else if (res.status == 500) {
+            else if (res.status == 400) {
                 hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
             }
             else {

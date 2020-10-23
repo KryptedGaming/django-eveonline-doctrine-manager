@@ -24,6 +24,7 @@ Audit Fitting
                         <thead>
                             <th class="col-lg-1 col-md-1 col-xs-1"></th>
                             <th class="col-lg-3 col-md-3 col-xs-2">Character Name</th>
+                            <th class="col-lg-3 col-md-3 col-xs-2">Corporation</th>
                             <th class="col-lg-2 col-md-2 hidden-xs">Skill Check</th>
                             <th class="col-lg-2 col-md-2 hidden-xs">Hangar Check</th>
                         </thead>
@@ -78,33 +79,39 @@ Audit Fitting
     })
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", async function () {
-        var fittingId = document.querySelectorAll('.fitting-id')[0].id
-        var skillCheckObjects = document.querySelectorAll('.skillcheck')
-        var hangarCheckObjects = document.querySelectorAll('.hangarcheck')
+document.addEventListener("DOMContentLoaded", async function () {
+    var fittingId = document.querySelectorAll('.fitting-id')[0].id
+    var skillCheckObjects = document.querySelectorAll('.skillcheck')
+    var hangarCheckObjects = document.querySelectorAll('.hangarcheck')
 
-        for (var i = 0; i < skillCheckObjects.length; i++) {
-            const id = skillCheckObjects[i].id.slice(2)
-            const res = await fetch('/eveonline/api/skillcheck?external_id=' + id + '&fitting_id=' + fittingId)
-            if (res.status == 204) {
-                skillCheckObjects[i].innerHTML = '<i class="fa fa-check text-success"></i>'
-            }
-            else {
-                skillCheckObjects[i].innerHTML = '<i class="fa fa-times text-danger"></i>'
-            }
-
+    skillCheckObjects.forEach(async skillCheckObject => {
+        const id = skillCheckObject.id.slice(2);
+        const res = await fetch('/eveonline/api/skillcheck?external_id=' + id + '&fitting_id=' + fittingId)
+        if (res.status == 204) {
+            skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
+        }
+        else if (res.status == 200) {
+            skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
+        }
+        else {
+            skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
         }
 
-        for (var i = 0; i < hangarCheckObjects.length; i++) {
-            const id = hangarCheckObjects[i].id.slice(2)
-            const res = await fetch('/eveonline/api/hangarcheck?external_id=' + id + '&fitting_id=' + fittingId)
-            if (res.status == 204) {
-                hangarCheckObjects[i].innerHTML = '<i class="fa fa-check text-success"></i>'
-            }
-            else {
-                hangarCheckObjects[i].innerHTML = '<i class="fa fa-times text-danger"></i>'
-            }
+    });
+
+    hangarCheckObjects.forEach(async hangarCheckObject => {
+        const id = hangarCheckObject.id.slice(2)
+        const res = await fetch('/eveonline/api/hangarcheck?external_id=' + id + '&fitting_id=' + fittingId)
+        if (res.status == 200) {
+            hangarCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
         }
-    })
+        else if (res.status == 404) {
+            hangarCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
+        }
+        else {
+            hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
+        }
+    });
+})
 </script>
 {% endblock %}

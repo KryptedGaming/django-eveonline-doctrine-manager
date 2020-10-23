@@ -126,16 +126,19 @@ def skillcheck_utility(request):
         character__external_id=request.GET['external_id']).first()
     
     if not character_report:
+        logger.info(f"No character report found for {external_id}")
         return HttpResponse(status=400)
     else:
         character_report = character_report.get_report()
 
     if fitting:
-        if fitting.pk not in character_report['fittings']:
+        if str(fitting.pk) not in character_report['fittings']:
+            logger.info(f"Fitting {fitting.pk} not found in character report for {external_id}")
             return HttpResponse(status=400)
-        
-        missing_skills = character_report['fittings'][fitting.pk].missing_skills
+        fitting_id = str(fitting.pk)
+        fitting = character_report['fittings'][fitting_id]
 
+        missing_skills = fitting['missing_skills']
         if missing_skills:
             return JsonResponse({
                 'missing_skills': missing_skills
@@ -170,6 +173,8 @@ def skillcheck_utility(request):
 def hangarcheck_utility(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
+    else:
+        external_id = request.GET['external_id']
     if not EveDoctrineSettings.objects.all().count() > 0:
         return HttpResponse(status=400)
     if not EveDoctrineSettings.get_instance().staging_structure:
@@ -180,16 +185,19 @@ def hangarcheck_utility(request):
     character_report = EveCharacterDoctrineReport.objects.filter(
         character__external_id=request.GET['external_id']).first()
     if not character_report:
+        logger.info(f"No character report for {external_id}")
         return HttpResponse(status=400)
 
     character_report = character_report.get_report()
 
     if 'fitting_id' in request.GET:
         fitting = EveFitting.objects.get(pk=request.GET['fitting_id'])
-        if fitting.pk not in character_report['fittings']:
+        fitting_id = str(fitting.pk)
+        if fitting_id not in character_report['fittings']:
             return HttpResponse(status=400)
         
-        if character_report['fittings'][fitting.pk]['in_hangar'] == True:
+        fitting = character_report['fittings'][fitting_id]
+        if fitting['in_hangar'] == True:
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=404)
