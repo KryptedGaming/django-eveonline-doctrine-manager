@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import permission_required
-from django_eveonline_doctrine_manager.views import old as views
 from django_eveonline_doctrine_manager.views import api, doctrines, fittings, skillplans, seeding
 
 urlpatterns = []

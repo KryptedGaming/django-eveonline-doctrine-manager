@@ -14,7 +14,6 @@ class FittingDetailView(DetailView):
     pk_url_kwarg = "id"
     model = EveFitting 
 
-
 class FittingAuditView(DetailView):
     template_name = 'django_eveonline_doctrine_manager/adminlte/fittings/fitting_audit.html'
     pk_url_kwarg = "id"

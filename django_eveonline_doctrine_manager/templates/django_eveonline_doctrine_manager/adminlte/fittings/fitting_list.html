@@ -37,7 +37,7 @@ View Fittings
                     {% for fitting in object_list %}
                     <tr>
                         <td class="text-center"><img class="img-circle" src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32"
-                                title="{{fitting.get_ship_name}}" width="32px">
+                                title="{{fitting.ship_name}}" width="32px">
                             </td>
                         <td class="hidden-xs">
                             {% for role in fitting.roles.all %}

@@ -15,6 +15,17 @@ class EveSkillList():
             })
         return ESL 
 
+    @staticmethod
+    def from_json(skill_json):
+        ESL = EveSkillList()
+        for key in skill_json:
+            ESL.add_skill({
+                'name': key, 
+                'level': skill_json[key]
+            })
+        return ESL
+        
+
     def add_skill(self, skill):
         for level in range(1, int(skill['level'])+1):
             skill_to_add = f"{skill['name']} {level}"
@@ -23,7 +34,7 @@ class EveSkillList():
             self.skill_list.append(skill_to_add)
             self.skill_key.add(skill_to_add)
 
-    def get_json(self):
+    def to_json(self):
         json_response = {}
         for skill in self.skill_list:
             skill_name = " ".join(skill.split(
@@ -62,4 +73,20 @@ class EveSkillList():
                 })
         return missing_skills
 
+    # TODO: refactor this crap lol
+    @staticmethod
+    def get_missing_skills_from_json(skills_json, external_id):
+        """
+        Expects a skill json to check against a character's skills
+        """
+        missing_skills = []
+        for skill in skills_json.keys():
+            if EveSkill.objects.filter(skill_name=skill, trained_skill_level__gte=skills_json[skill], entity__external_id=external_id).exists():
+                pass
+            else:
+                missing_skills.append({
+                    'name': skill,
+                    'level': skills_json[skill]
+                })
+        return missing_skills
 

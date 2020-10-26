@@ -1,8 +1,10 @@
 from celery import task, shared_task
-from django_eveonline_doctrine_manager.models import EveDoctrine, EveDoctrineSettings, EveCharacterDoctrineReport
+from django_eveonline_doctrine_manager.models import EveDoctrine, EveDoctrineSettings, EveCharacterDoctrineReport, EveFitting
 from django_eveonline_connector.models import EveSkill, EveCharacter, EveCorporation, EveAsset
-import logging 
+from .utilities.fittings import get_required_skills, get_market_format
+import logging, json
 logger = logging.getLogger(__name__)
+
 @shared_task
 def update_character_reports():
     """
@@ -32,7 +34,7 @@ def generate_character_report(character_id):
         skill_ready_fittings = []
         hangar_ready_fittings = []
         for fitting in doctrine.fittings:
-            missing_skills = fitting.get_required_skills().get_missing_skills(character_id)
+            missing_skills = fitting.get_missing_skills(character_id)
             if location_id:
                 logger.debug(f"Location ID set for doctrine settings, searching assets for {fitting.ship_id} at {location_id}")
                 in_hangar = EveAsset.objects.filter(entity=character, 
@@ -77,3 +79,17 @@ def generate_character_report(character_id):
     character_report_json["skillplans"] = skill_plans
 
     character_report.save_report(character_report_json)
+
+"""
+Fitting Tasks
+Backend tasks for fittings.
+"""
+@shared_task
+def populate_fitting_fields(fitting_id):
+    fitting = EveFitting.objects.get(pk=fitting_id)
+    required_skills_raw = json.dumps(get_required_skills(fitting))
+    market_format_raw = get_market_format(fitting)
+
+    fitting.required_skills_raw = required_skills_raw
+    fitting.market_format_raw = market_format_raw
+    fitting.save(update_fields=['required_skills_raw', 'market_format_raw'])

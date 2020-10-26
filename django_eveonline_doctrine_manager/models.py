@@ -1,10 +1,11 @@
 from django.db import models
 from django.apps import apps
 from django_eveonline_connector.models import EveStructure, EveEntity, EveCharacter, EveContract
-from django_eveonline_connector.utilities.static.universe import resolve_type_name_to_type_id, get_type_id_prerq_skill_ids, get_prerequisite_skills, resolve_type_id_to_type_name, resolve_type_id_to_category_name
+from django_eveonline_connector.utilities.static.universe import resolve_type_name_to_type_id
 from django_eveonline_doctrine_manager.utilities.abstractions import EveSkillList
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django_singleton_admin.models import DjangoSingleton
+from .utilities.fittings import parse_eft_format, get_required_skills, get_market_format, get_ship_name
 import json, logging, re, roman
 
 logger = logging.getLogger(__name__)
@@ -51,8 +52,6 @@ class EveDoctrineSettings(DjangoSingleton):
 Core models
 These are the main data models for the doctrine manager
 """
-
-
 class EveDoctrine(models.Model):
     name = models.CharField(max_length=32)
     description = models.TextField(blank=True, null=True)
@@ -84,146 +83,46 @@ class EveFitting(models.Model):
     roles = models.ManyToManyField("EveDoctrineRole", blank=True)
     # eve static info
     ship_id = models.IntegerField(editable=False, blank=True, null=True)
+    ship_name = models.CharField(max_length=128, default="Unknown Hull")
     # associations 
     refit_of = models.ForeignKey("EveFitting", blank=True, null=True, default=None, on_delete=models.CASCADE)
+    # globs
+    required_skills_raw = models.TextField()
+    parsed_format_raw = models.TextField(null=True, blank=True)
+    market_format_raw = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.ship_id = resolve_type_name_to_type_id(get_ship_name(self))
+        self.ship_name = get_ship_name(self)
+        self.parsed_format_raw = json.dumps(parse_eft_format(self))
+        super(EveFitting, self).save(*args, **kwargs)
+
+    @property
+    def market_format(self):
+        return self.market_format_raw
+
+    @property
+    def parsed_format(self):
+        return dict(json.loads(self.parsed_format_raw))
+
+    @property
+    def required_skills(self):
+        return dict(json.loads(self.required_skills_raw))
 
     @property
     def refits(self):
         return EveFitting.objects.filter(refit_of=self)
-
-    def save(self, *args, **kwargs):
-        self.ship_id = resolve_type_name_to_type_id(self.get_ship_name())
-        super(EveFitting, self).save(*args, **kwargs)
     
     @property
     def character_list(self):
         return EveCharacter.objects.filter(corporation__track_characters=True)
 
-    def __str__(self):
-        return self.name
-
-    def get_ship_name(self):
-         fitting = self.fitting.splitlines()
-         line = fitting[0]
-         return line[1:-1].split(',')[0].strip()
-
-    def get_required_skills(self):
-        fitting = self.parse_fitting()
-        exclude_keys = ['ship']
-        top_level_skills = []
-
-        for key in fitting:
-            
-            if key in exclude_keys:
-                continue
-
-            module_list = fitting[str(key)]
-            unique_modules = set()
-            unique_modules.add(fitting['ship']['type_id'])
-            for module in module_list:
-                unique_modules.add(module['type_id'])
-
-            for module in unique_modules:
-                top_level_skills += get_type_id_prerq_skill_ids(module)
-            
-            skill_list = EveSkillList()
-            for skill in top_level_skills:
-                for prerq_skill in reversed(get_prerequisite_skills([skill])):
-                    skill_list.add_skill(prerq_skill)
-
-        return skill_list  
-
-    @property
-    def market_paste(self):
-        fitting = self.parse_fitting()
-        fitting_paste = []
-        exclude_keys = ['ship']
-        fitting_paste.append(self.get_ship_name())
-        for key in fitting:
-            if key in exclude_keys:
-                continue
-            for module in fitting[key]:
-                name = module['type_name']
-                quantity = module['quantity']
-                if not quantity:
-                    quantity = 1
-                fitting_paste.append(f"{name} x{quantity}")
-        return "\n".join(fitting_paste)
-
-    def parse_fitting(self):
-        fit = {
-            'ship': None,
-            'highslots': [],
-            'midslots': [],
-            'lowslots': [],
-            'rigs': [],
-            'drones': [],
-            'implants': [],
-            'cargo': [],
-        }
-
-        regex_pattern = "(?P<type_name>[[A-Za-z0-9\-_' ]*(?<![x0-9]))(?P<loaded>,.*)?(?P<quantity>x[0-9]*)?"
-
-        fitting = self.fitting.splitlines()
-        fitting.reverse()
-        ship_info_line = fitting.pop()
-        ship_info = {
-            'name': ship_info_line[1:-1].split(',')[1].strip(),
-            'type_name': ship_info_line[1:-1].split(',')[0].strip(),
-            'type_id': resolve_type_name_to_type_id(ship_info_line[1:-1].split(',')[0].strip()),
-        }
-
-        fit['ship'] = ship_info 
-        case = -1
-        cases = ['lowslots', 'midslots', 'highslots', 'rigs', 'items']
-        while len(fitting) > 1:
-            if (fitting[-1] == '' or fitting[-1].isspace()):
-                line = fitting.pop()
-                if case < 4:
-                    case += 1
-                while(fitting[-1].isspace() or fitting[-1] == ""):
-                    excess = fitting.pop()
-                continue
-            else:
-                line = fitting.pop()
-
-            if 'Empty' in line or not line:
-                continue
-            
-            results = re.search(regex_pattern, line)
-            try:
-                type_name = results.group('type_name').rstrip()
-                quantity = results.group('quantity')
-            except IndexError as e:
-                pass # just means no quantity 
-            type_id = resolve_type_name_to_type_id(type_name)
-            category = resolve_type_id_to_category_name(type_id)
-            if case == 4 and category == 'Drone':
-                fit['drones'].append({
-                    "type_name": type_name,
-                    "type_id": type_id,
-                    "quantity": int(quantity[1:]) if quantity else None,
-                })
-            elif case == 4 and category == 'Implant':
-                fit['drones'].append({
-                    "type_name": type_name,
-                    "type_id": type_id,
-                    "quantity": int(quantity[1:]) if quantity else None,
-                })
-            elif case == 4:
-                fit['cargo'].append({
-                    "type_name": type_name,
-                    "type_id": type_id,
-                    "quantity":  int(quantity[1:]) if quantity else None,
-                })
-            else:
-                fit[cases[case]].append({
-                    "type_name": type_name,
-                    "type_id": type_id,
-                    "quantity": quantity if quantity else None,
-                })
-            
-        return fit
+    def get_missing_skills(self, character_id):
+        character = EveCharacter.objects.get(external_id=character_id)
+        return EveSkillList.get_missing_skills_from_json(self.required_skills, character_id)
 
 class EveSkillPlan(models.Model):
     name = models.CharField(max_length=32)

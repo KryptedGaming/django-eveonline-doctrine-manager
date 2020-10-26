@@ -217,5 +217,5 @@ def hangarcheck_utility(request):
 def get_fitting(request):
     if 'fitting_id' not in request.GET:
         return HttpResponse(status=400)
-    fitting = EveFitting.objects.get(pk=request.GET['fitting_id']).parse_fitting()
+    fitting = EveFitting.objects.get(pk=request.GET['fitting_id']).json
     return JsonResponse(fitting)
