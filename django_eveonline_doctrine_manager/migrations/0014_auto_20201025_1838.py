@@ -13,7 +13,7 @@ def refresh_fittings(apps, schema_editor):
     EveFitting = apps.get_model(
         'django_eveonline_doctrine_manager', 'EveFitting')
     for fitting in EveFitting.objects.all():
-        fitting.parsed_format_raw = json.dumps(parse_eft_format(fitting.fitting))
+        fitting.parsed_format_raw = json.dumps(parse_eft_format(fitting))
         fitting.required_skills_raw = json.dumps(get_required_skills(fitting))
         fitting.market_format_raw = get_market_format(fitting)
         fitting.ship_name = get_ship_name(fitting)
