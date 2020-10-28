@@ -170,7 +170,7 @@ class EveFittingMarketRule(models.Model):
     @property
     def current_stock(self):
         title=self.required_name
-        return EveContract.objects.filter(end_location_id=self.structure.structure_id, title=title).count()
+        return EveContract.objects.filter(end_location_id=self.structure.structure_id, title=title, status="outstanding").count()
 
 """
 Grouping models
