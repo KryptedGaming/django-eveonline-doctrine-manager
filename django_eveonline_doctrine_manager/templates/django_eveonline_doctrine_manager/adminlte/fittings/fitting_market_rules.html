@@ -2,6 +2,7 @@
 
 {% block header %}
 Fittings
+<button class="btn btn-default pull-right" onclick="toggleStocked(this)">Show Stocked</button>
 {% endblock %}
 
 {% block description %}
@@ -15,6 +16,7 @@ View Market Rules
         <h3 class="box-title">
             Market Rule Table
         </h3>
+        
     </div>
     <div class="box-body">
         <div class="dataTables_wrapper form-inline dt-bootstrap">
@@ -31,7 +33,12 @@ View Market Rules
                 </thead>
                 <tbody>
                     {% for fitting_rule in object_list %}
-                    <tr>
+                    <tr
+                    {% if fitting_rule.current_stock >=  fitting_rule.requested_stock %}
+                    hidden
+                    class="stocked"
+                    {% endif %}
+                    >
                         <td class="text-center"><img class="img-circle"
                                 src="https://images.evetech.net/types/{{fitting_rule.fitting.ship_id}}/icon?size=32"
                                 title="{{fitting_rule.fitting.ship_name}}" width="24px"></td>
@@ -46,7 +53,7 @@ View Market Rules
                                 Restock
                             </button>
                             {% else %}
-                            <button type="button" class="btn btn-info btn-block"disabled>
+                            <button type="button" class="btn btn-info btn-block" disabled>
                                 Stocked
                             </button>
                             {% endif %}
@@ -95,6 +102,21 @@ View Market Rules
 
 {% block scripts %}
 <script>
+    async function toggleStocked(button) {
+        if (button.innerHTML === "Show Stocked") {
+            button.innerHTML = "Hide Stocked"
+            button.classList = "btn btn-warning pull-right"
+        }
+        else {
+            button.innerHTML = "Show Stocked"
+            button.classList = "btn btn-default pull-right"
+        }
+        stockedRows = document.querySelectorAll('.stocked')
+        stockedRows.forEach(element => {
+            element.hidden = !(element.hidden)
+        });
+        
+    }
     async function pullContracts(button) {
         button.classList = "btn btn-danger pull-right"
         button.disabled = true 
