@@ -123,15 +123,13 @@ View Market Rules
         button.innerHTML = '<i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>'
         location.href = "{% url 'django-eveonline-doctrine-manager-fittings-stock' %}";
     }
-    $.fn.DataTable.ext.pager.numbers_length = 5;
     $(function () {
         $('table').DataTable({
-            'paging': true,
-            'lengthChange': true,
-            'searching': true,
+            'paging': false,
+            'lengthChange': false,
+            'searching': false,
             'ordering': true,
             'order': [[1, 'asc']],
-            'pageLength': 10,
             "autoWidth": false,
         })
     })
