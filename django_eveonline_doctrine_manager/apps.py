@@ -40,5 +40,6 @@ class DjangoEveOnlineDoctrineManagerConfig(AppConfig):
             except BindException as e:
                 print(e)
                 return
-            # Required Task Bindings
-            
+            except Exception as e:
+                print(e)
+                return
