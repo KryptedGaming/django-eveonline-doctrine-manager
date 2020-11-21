@@ -9,18 +9,16 @@ View Doctrines
 {% endblock %}
 
 {% block content %}
-<div class="box box-primary box-solid">
-    <div class="box-header">
-        <h3 class="box-title">Doctrines</h3>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">Doctrines</h3>
         {% if perms.django_eveonline_doctrine_manager.add_evedoctrine %}
-        <a class="btn pull-right" href="{% url 'django-eveonline-doctrine-manager-doctrines-create' %}">
+        <a class="btn float-right" href="{% url 'django-eveonline-doctrine-manager-doctrines-create' %}">
             <i class="fa fa-plus"></i>
         </a>
         {% endif %}
     </div>
-    <div class="box-body">
-        <div class="dataTables_wrapper form-inline dt-bootstrap">
-            
+    <div class="card-body">
             <table class="table table-bordered table-striped dataTable">
                 <thead>
                     <th class="col-lg-2 col-md-2 col-xs-1">Name</th>
@@ -78,8 +76,6 @@ View Doctrines
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-        
     </div>
 </div>
 

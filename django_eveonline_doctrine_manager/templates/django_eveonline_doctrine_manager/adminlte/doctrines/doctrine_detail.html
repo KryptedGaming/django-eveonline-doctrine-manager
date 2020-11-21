@@ -3,7 +3,7 @@
 {% block header %}
 View Doctrine
 <p id="{{request.user.info.get_primary_character.external_id}}" class="external-id" hidden></p>
-<div class="btn-group pull-right">
+<div class="btn-group float-right">
     {% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
     <a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " style="flex: 1;"
         class="btn btn-info fa fa-user-secret"></a>
@@ -31,11 +31,11 @@ View Doctrine
 {% block content %}
 <div class="row">
     <div class="col-md-6">
-        <div class="box box-info box-solid">
-            <div class="box-header">
-                <h3 class="box-title">Description</h3>
+        <div class="card card-info card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Description</h3>
             </div>
-            <div class="box-body">
+            <div class="card-body">
             {% if object.description %}
             <p>
                 {% autoescape off %}
@@ -46,7 +46,7 @@ View Doctrine
             <p>No description set.</p>
             {% endif %}
             </div>
-            <div class="box-footer">
+            <div class="card-footer">
             {% if object.tags.all %}
             <p>
                 Tags:
@@ -60,42 +60,40 @@ View Doctrine
     </div>
 
     <div class="col-md-6">
-        <div class="box box-primary box-solid">
-            <div class="box-header">
-                <h3 class="box-title">Skill Plans</h3>
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Skill Plans</h3>
             </div>
-            <div class="box-body">
-                <div class="dataTables_wrapper form-inline dt-bootstrap">
-                    <table  class="table table-bordered table-striped dataTable">
-                        <thead>
-                            <th class="col-lg-1 col-md-1 col-xs-1"></th>
-                            <th class="col-lg-2 col-md-2 col-xs-2">Name</th>
-                            <th class="col-lg-1 col-md-1 col-xs-1">Role</th>
-                            <th class="col-lg-1 col-md-1 col-xs-1">Actions</th>
-                        </thead>
-                        <tbody>
-                            {% for skill_plan in object.skill_plans %}
-                            <tr>
-                                <td id="{{skill_plan.pk}}" class="skillplan text-center">
-                                    <i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>
-                                </td>
-                                <td>{{skill_plan.name}}</td>
-                                <td>
-                                    {% for role in skill_plan.roles.all %}
-                                    <span class="label label-{{role.color}}">{{role}}</span>
-                                    {% endfor %}
-                                </td>
-                                
-                                <td>
-                                    <div style="display: flex;" class="btn-group">
-                                        <a style="flex: 1;" class="btn btn-info fa fa-eye" href="#"></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body">
+                <table  class="table table-bordered table-striped dataTable">
+                    <thead>
+                        <th class="col-lg-1 col-md-1 col-xs-1"></th>
+                        <th class="col-lg-2 col-md-2 col-xs-2">Name</th>
+                        <th class="col-lg-1 col-md-1 col-xs-1">Role</th>
+                        <th class="col-lg-1 col-md-1 col-xs-1">Actions</th>
+                    </thead>
+                    <tbody>
+                        {% for skill_plan in object.skill_plans %}
+                        <tr>
+                            <td id="{{skill_plan.pk}}" class="skillplan text-center">
+                                <i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>
+                            </td>
+                            <td>{{skill_plan.name}}</td>
+                            <td>
+                                {% for role in skill_plan.roles.all %}
+                                <span class="label label-{{role.color}}">{{role}}</span>
+                                {% endfor %}
+                            </td>
+                            
+                            <td>
+                                <div style="display: flex;" class="btn-group">
+                                    <a style="flex: 1;" class="btn btn-info fa fa-eye" href="#"></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -103,12 +101,11 @@ View Doctrine
 
 <div class="row">
     <div class="col-md-12">
-        <div class="box box-success box-solid">
-            <div class="box-header">
-                <h3 class="box-title">Fittings</h3>
+        <div class="card card-success card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Fittings</h3>
             </div>
-            <div id="{{object.pk}}" class="box-body doctrine-id">
-                <div  class="dataTables_wrapper form-inline dt-bootstrap">
+            <div id="{{object.pk}}" class="card-body doctrine-id">
                     <table class="table table-bordered table-striped dataTable">
                         <thead>
                             <th class="col-lg-1 col-md-1 col-xs-1"></th>
@@ -140,7 +137,6 @@ View Doctrine
                             {% endfor %}
                         </tbody>
                     </table>
-                </div>
             </div>
         </div>
     </div>
@@ -165,9 +161,9 @@ View Doctrine
 
 <script>
 document.addEventListener("DOMContentLoaded", async function() {
-    var primaryBox = document.querySelectorAll('.doctrine-id')
+    var primarycard = document.querySelectorAll('.doctrine-id')
     var externalId = document.querySelectorAll('.external-id')[0].id
-    var doctrineId = primaryBox[0].id
+    var doctrineId = primarycard[0].id
     var skillPlanCheckObjects=document.querySelectorAll('.skillplan')
 
 

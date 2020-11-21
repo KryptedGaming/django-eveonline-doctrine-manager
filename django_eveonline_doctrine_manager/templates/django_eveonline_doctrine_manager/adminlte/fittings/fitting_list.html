@@ -10,21 +10,18 @@ View Fittings
 {% endblock %}
 
 {% block content %}
-<div class="box box-primary box-solid">
-    <div class="box-header">
-        <h3 class="box-title">
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
             Fitting Table
         </h3>
         {% if perms.django_eveonline_doctrine_manager.add_evefitting %}
-        <a class="btn pull-right" href="{% url 'django-eveonline-doctrine-manager-fittings-create' %}">
+        <a class="btn float-right" href="{% url 'django-eveonline-doctrine-manager-fittings-create' %}">
             <i class="fa fa-plus"></i>
         </a>
         {% endif %}
     </div>
-    <div class="box-body">
-        
-        <div class="dataTables_wrapper form-inline dt-bootstrap">
-            
+    <div class="card-body">
             <table class="table table-bordered table-striped dataTable">
                 <thead>
                     <th class="col-lg-1 col-md-1 col-xs-2"></th>
@@ -67,9 +64,8 @@ View Fittings
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
     </div>
-    <div class="box-footer">
+    <div class="card-footer">
         
     </div>  
 </div>

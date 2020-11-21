@@ -2,7 +2,7 @@
 
 {% block header %}
 Fittings
-<button class="btn btn-default pull-right" onclick="toggleStocked(this)">Show Stocked</button>
+<button class="btn btn-default float-right" onclick="toggleStocked(this)">Show Stocked</button>
 {% endblock %}
 
 {% block description %}
@@ -11,16 +11,14 @@ View Market Rules
 {% endblock %}
 
 {% block content %}
-<div class="box box-primary box-solid">
-    <div class="box-header">
-        <h3 class="box-title">
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
             Market Rule Table
         </h3>
         
     </div>
-    <div class="box-body">
-        <div class="dataTables_wrapper form-inline dt-bootstrap">
-
+    <div class="card-body">
             <table class="table table-bordered table-striped dataTable">
                 <thead>
                     <th class="col-lg-1 col-md-1 col-xs-2"></th>
@@ -62,9 +60,8 @@ View Market Rules
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
     </div>
-    <div class="box-footer">
+    <div class="card-footer">
 
     </div>
 </div>
@@ -105,11 +102,11 @@ View Market Rules
     async function toggleStocked(button) {
         if (button.innerHTML === "Show Stocked") {
             button.innerHTML = "Hide Stocked"
-            button.classList = "btn btn-warning pull-right"
+            button.classList = "btn btn-warning float-right"
         }
         else {
             button.innerHTML = "Show Stocked"
-            button.classList = "btn btn-default pull-right"
+            button.classList = "btn btn-default float-right"
         }
         stockedRows = document.querySelectorAll('.stocked')
         stockedRows.forEach(element => {
@@ -118,7 +115,7 @@ View Market Rules
         
     }
     async function pullContracts(button) {
-        button.classList = "btn btn-danger pull-right"
+        button.classList = "btn btn-danger float-right"
         button.disabled = true 
         button.innerHTML = '<i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>'
         location.href = "{% url 'django-eveonline-doctrine-manager-fittings-stock' %}";
