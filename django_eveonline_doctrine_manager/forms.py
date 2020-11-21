@@ -5,7 +5,15 @@ from django_eveonline_doctrine_manager.models import (EveDoctrineManagerTag,
     EveDoctrineRole,
     EveDoctrine,
     EveFitting,
-    EveSkillPlan)
+    EveSkillPlan,
+    EveDoctrineSettings)
+
+from django.forms import ModelForm
+
+class EveDoctrineSettingsForm(ModelForm):
+    class Meta:
+        model=EveDoctrineSettings
+        fields=['staging_structure', 'contract_entity', 'seeding_contract_prefix']
 
 class EveDoctrineForm(forms.Form):
     name = forms.CharField(max_length=32, required=True)
