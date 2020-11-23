@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 Delete Doctrine
 {% endblock %}
 
-{% block description %}
-{{object.name}}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-list' %}">Doctrines</a></li>
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' object.pk %}">View Doctrine</a></li>
+{% endblock %}
+
+{% block breadcrumb %}
+Delete Doctrine
 {% endblock %}
 
 {% block content %}

@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 Fittings
 <button class="btn btn-default float-right" onclick="toggleStocked(this)">Show Stocked</button>
 {% endblock %}
 
-{% block description %}
-View Market Rules
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-list' %}">Fittings</a></li>
+{% endblock %}
 
+{% block breadcrumb %}
+View Market Rules
 {% endblock %}
 
 {% block content %}
@@ -21,12 +24,12 @@ View Market Rules
     <div class="card-body">
             <table class="table table-bordered table-striped dataTable">
                 <thead>
-                    <th class="col-lg-1 col-md-1 col-xs-2"></th>
-                    <th class="col-lg-1 col-md-1 col-xs-1">Fitting</th>
-                    <th class="col-lg-1 col-md-1 hidden-xs">Location</th>
-                    <th class="col-lg-1 col-md-1 col-xs-1">Desired Stock</th>
-                    <th class="col-lg-1 col-md-1 col-xs-1">Current Stock</th>
-                    <th class="col-lg-2 col-md-2 col-xs-2">Actions</th>
+                    <th></th>
+                    <th>Fitting</th>
+                    <th class="d-none d-sm-block">Location</th>
+                    <th>Desired Stock</th>
+                    <th>Current Stock</th>
+                    <th class="d-none d-sm-block">Actions</th>
 
                 </thead>
                 <tbody>
@@ -41,11 +44,11 @@ View Market Rules
                                 src="https://images.evetech.net/types/{{fitting_rule.fitting.ship_id}}/icon?size=32"
                                 title="{{fitting_rule.fitting.ship_name}}" width="24px"></td>
                         <td>{{fitting_rule.fitting.name}}</td>
-                        <td>{{fitting_rule.structure.name}}</td>
+                        <td class="d-none d-sm-block">{{fitting_rule.structure.name}}</td>
                         <td>{{fitting_rule.requested_stock}}</td>
                         <td>{{fitting_rule.current_stock}}</td>
                         
-                        <td>
+                        <td class="d-none d-sm-block">
                             {% if fitting_rule.current_stock < fitting_rule.requested_stock %}
                             <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#modal_{{fitting_rule.pk}}">
                                 Restock
@@ -78,14 +81,12 @@ View Market Rules
             <div class="modal-body">
                 <ol>
                     <li>Purchase the the fitting below</li>
-                    <li>Haul the fitting to <input type="text" id="fname" name="fname" value="{{fitting_rule.structure.name}}" disabled></li>
+                    <li>Haul the fitting to <input type="text" name="fname" value="{{fitting_rule.structure.name}}" disabled></li>
                     <li>Create a contract with the proper settings</li>
-                    <li>The name <b>MUST</b> be <input type="text" id="fname" name="fname" value="{{fitting_rule.required_name}}" disabled></li>
+                    <li>The name <b>MUST</b> be <input type="text"  name="fname" value="{{fitting_rule.required_name}}" disabled></li>
                     <li>Click the "Pull Contracts" button below when you have created the contracts</li>
                 </ol>
-                <textarea style="width:100%" onclick="this.select()" rows="15" readonly="readonly">
-                    &#13;&#10;{{fitting_rule.fitting.market_paste}}
-                </textarea>
+                <textarea style="width:100%" onclick="this.select()" rows="15" readonly="readonly">{{fitting_rule.fitting.market_format_raw}}</textarea>
             </div>
             <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

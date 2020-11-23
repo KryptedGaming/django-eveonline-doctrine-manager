@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
-{% block header %}
-Doctrines
+{% block title %}
+Doctrine Form
 {% endblock %}
 
-{% block description %}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-list' %}">Doctrines</a></li>
+{% endblock %}
+
+
+{% block breadcrumb %}
 Doctrine Form
 {% endblock %}
 
@@ -36,7 +41,8 @@ Doctrine Form
 <script>
     $(function () {
         // Summernote
-        $('.wysihtml5').summernote()
+        $('#id_description').summernote()
+
     })
 </script>
 {% endblock %}

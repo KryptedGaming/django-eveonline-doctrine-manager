@@ -1,30 +1,24 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 View Fitting
-<div class="btn-group float-right">
-    {% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
-    <a href="{% url 'django-eveonline-doctrine-manager-fittings-audit' object.pk %} " style="flex: 1;"
-        class="btn btn-info fa fa-user-secret"></a>
-    {% endif %}
-    {% if perms.django_eveonline_doctrine_manager.change_evefitting %}
-    <a href="{% url 'django-eveonline-doctrine-manager-fittings-update' object.pk %}" style="flex: 1;"
-        class="btn btn-warning fa fa-pencil">
-    </a>
-    {% endif %}
-
-    {% if perms.django_eveonline_doctrine_manager.delete_evefitting%}
-    <a href="{% url 'django-eveonline-doctrine-manager-fittings-delete' object.pk %}" style="flex: 1;"
-        class="btn btn-danger fa fa-times"></a>
-    {% endif %}
-</div>
 {% endblock %}
 
-{% block description %}
-{{object.name}}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-list' %}">Fittings</a></li>
 {% endblock %}
+
+{% block breadcrumb %}
+View Fitting
+{% endblock %}
+
 
 {% block content %}
+<div class="row">
+    {% include 'django_eveonline_doctrine_manager/adminlte/fittings/components/fitting_view_button_group.html' %}
+</div>
+<hr>
 <div class="row">
     <div class="col-md-6">
         <div class="card card-primary card-outline">
@@ -32,9 +26,7 @@ View Fitting
                 <h3 class="card-title">EFT Format</h3>
             </div>
             <div class="card-body">
-                <textarea style="width:100%" onclick="this.select()" class="col-md-12" rows="15" readonly="readonly">
-                    &#13;&#10;{{object.fitting}}
-                </textarea>
+                <textarea style="width:100%" onclick="this.select()" class="col-md-12" rows="15" readonly="readonly">{{object.fitting}}</textarea>
             </div>
         </div>
     </div>
@@ -77,11 +69,9 @@ View Fitting
             <div class="card-body">
                 <table class="table table-bordered table-striped dataTable">
                     <thead>
-                        <th class="col-lg-1 col-md-1 col-xs-2"></th>
-                        <th class="col-lg-3 col-md-3 col-xs-2">Fitting Name</th>
-                        <th class="col-lg-3 col-md-3 hidden-xs">Tags</th>
-                        <th class="col-lg-3 col-md-3 hidden-xs">Roles</th>
-                        <th class="col-lg-2 col-md-2 col-xs-2">Actions</th>
+                        <th></th>
+                        <th>Fitting Name</th>
+                        <th>Actions</th>
 
                     </thead>
                     <tbody>
@@ -91,24 +81,14 @@ View Fitting
                                     src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32"
                                     title="{{fitting.get_ship_name}}" width="32px"></td>
                             <td>{{fitting.name}}</td>
-                            <td class="hidden-xs">
-                                {% for tag in fitting.tags.all %}
-                                <span class="badge badge-primary">{{tag}}</span>
-                                {% endfor %}
-                            </td>
-                            <td class="hidden-xs">
-                                {% for role in fitting.roles.all %}
-                                <span class="badge badge-primary">{{role}}</span>
-                                {% endfor %}
-                            </td>
                             <td>
                                 <div style="display: flex;" class="btn-group btn-group-md">
                                     <a href="{% url 'django-eveonline-doctrine-manager-fittings-detail' fitting.pk %}" style="flex: 1;"
                                         class="btn btn-info fa fa-eye"></a>
                                     <a href="{% url 'django-eveonline-doctrine-manager-fittings-update' fitting.pk %}" style="flex: 1;"
-                                        class="btn btn-warning fa fa-pencil"></a>
+                                        class="btn btn-warning text-white fa fa-edit"></a>
                                     <a href="{% url 'django-eveonline-doctrine-manager-fittings-delete' fitting.pk %}" style="flex: 1;"
-                                        class="btn btn-danger fa fa-times"></a>
+                                        class="btn btn-danger fa fa-times-circle"></a>
                                 </div>
                             </td>
                         </tr>

@@ -38,7 +38,7 @@ sidebar_binding = SidebarBinding(
     package_name=app_config.name,
     parent_menu_item={
         "fa_icon": 'fa-rocket',
-        "name": "Doctrines",
+        "name": "Doctrine Menu",
         "url": None, 
     },
     child_menu_items=[

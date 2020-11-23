@@ -1,34 +1,44 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 View Doctrine
-<p id="{{request.user.info.get_primary_character.external_id}}" class="external-id" hidden></p>
-<div class="btn-group float-right">
-    {% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
-    <a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " style="flex: 1;"
-        class="btn btn-info fa fa-user-secret"></a>
-    {% endif %}
-    {% if perms.django_eveonline_doctrine_manager.change_evedoctrine %}
-    <a href="{% url 'django-eveonline-doctrine-manager-doctrines-update' object.pk %}" style="flex: 1;"
-        class="btn btn-warning fa fa-pencil">
-    </a>
-    {% endif %}
-    
-    {% if perms.django_eveonline_doctrine_manager.delete_evedoctrine %}
-    <a href="{% url 'django-eveonline-doctrine-manager-doctrines-delete' object.pk %}" style="flex: 1;"
-        class="btn btn-danger fa fa-times"></a>
-    {% endif %}
-</div>
+
+
 {% endblock %}
 
-{% block description %}
-{{object.name}}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-list' %}">Doctrines</a></li>
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' object.pk %}">View Doctrine</a></li>
+{% endblock %}
 
+
+{% block breadcrumb %}
+View Doctrine
 {% endblock %}
 
 
 
 {% block content %}
+<p id="{{request.user.info.get_primary_character.external_id}}" class="external-id" hidden></p>
+<div class="row">
+    <div class="btn-group float-right btn-block">
+        {% if perms.django_eveonline_doctrine_manager.view_evecharacterdoctrinereport %}
+        <a href="{% url 'django-eveonline-doctrine-manager-doctrines-audit' object.pk %} " style="flex: 1;"
+            class="btn btn-info fa fa-chart-bar"></a>
+        {% endif %}
+        {% if perms.django_eveonline_doctrine_manager.change_evedoctrine %}
+        <a href="{% url 'django-eveonline-doctrine-manager-doctrines-update' object.pk %}" style="flex: 1;"
+            class="btn btn-warning text-white fa fa-edit">
+        </a>
+        {% endif %}
+        
+        {% if perms.django_eveonline_doctrine_manager.delete_evedoctrine %}
+        <a href="{% url 'django-eveonline-doctrine-manager-doctrines-delete' object.pk %}" style="flex: 1;"
+            class="btn btn-danger fa fa-times-circle"></a>
+        {% endif %}
+    </div>
+</div>
+<hr>
 <div class="row">
     <div class="col-md-6">
         <div class="card card-info card-outline">
@@ -67,10 +77,10 @@ View Doctrine
             <div class="card-body">
                 <table  class="table table-bordered table-striped dataTable">
                     <thead>
-                        <th class="col-lg-1 col-md-1 col-xs-1"></th>
-                        <th class="col-lg-2 col-md-2 col-xs-2">Name</th>
-                        <th class="col-lg-1 col-md-1 col-xs-1">Role</th>
-                        <th class="col-lg-1 col-md-1 col-xs-1">Actions</th>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Actions</th>
                     </thead>
                     <tbody>
                         {% for skill_plan in object.skill_plans %}
@@ -108,10 +118,9 @@ View Doctrine
             <div id="{{object.pk}}" class="card-body doctrine-id">
                     <table class="table table-bordered table-striped dataTable">
                         <thead>
-                            <th class="col-lg-1 col-md-1 col-xs-1"></th>
-                            <th class="col-lg-3 col-md-3 col-xs-2">Fitting Name</th>
-                            <th class="col-lg-2 col-md-2 hidden-xs">Role</th>
-                            <th class="col-lg-3 col-md-3 col-xs-2">Actions</th>
+                            <th></th>
+                            <th>Fitting Name</th>
+                            <th>Actions</th>
                         </thead>
                         <tbody>
                             {% for fitting in object.fittings %}
@@ -122,11 +131,6 @@ View Doctrine
                                 <td>
                                     
                                     {{fitting.name}}
-                                </td>
-                                <td class="hidden-xs">
-                                    {% for role in fitting.roles.all %}
-                                    <span class="label label-{{role.color}}">{{role}}</span>
-                                    {% endfor %}
                                 </td>
                                 <td>
                                     <div style="display: flex;" class="btn-group">

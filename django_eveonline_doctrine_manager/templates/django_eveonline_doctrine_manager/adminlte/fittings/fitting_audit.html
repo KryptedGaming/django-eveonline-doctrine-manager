@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 Audit Fitting
 {% endblock %}
 
-{% block description %}
-{{object.name}}
-<p id="{{object.pk}}" class="fitting-id" hidden></p>
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-list' %}">Fittings</a></li>
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-detail' object.pk %}">View Fitting</a></li>
+{% endblock %}
+
+{% block breadcrumb %}
+Audit Fitting
 {% endblock %}
 
 
 
 {% block content %}
+<p id="{{object.pk}}" class="fitting-id" hidden></p>
 <div class="row">
     <div class="col-md-12">
         <div class="card card-danger card-outline">
@@ -21,11 +26,11 @@ Audit Fitting
             <div class="card-body">
                 <table class="table table-bordered table-striped dataTable">
                     <thead>
-                        <th class="col-lg-1 col-md-1 col-xs-1"></th>
-                        <th class="col-lg-3 col-md-3 col-xs-2">Character Name</th>
-                        <th class="col-lg-3 col-md-3 col-xs-2">Corporation</th>
-                        <th class="col-lg-2 col-md-2 hidden-xs">Skill Check</th>
-                        <th class="col-lg-2 col-md-2 hidden-xs">Hangar Check</th>
+                        <th></th>
+                        <th>Character Name</th>
+                        <th>Corporation</th>
+                        <th>Skill Check</th>
+                        <th>Hangar Check</th>
                     </thead>
                     <tbody>
                         {% for character in object.character_list %}
@@ -89,10 +94,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
         }
         else if (res.status == 200) {
-            skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
+            skillCheckObject.innerHTML = '<i class="text-danger fa fa-times"></i>'
         }
         else {
-            skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
+            skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-exclamation-triangle text-warning"></i>'
         }
 
     });
@@ -107,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             hangarCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
         }
         else {
-            hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
+            hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-exclamation-triangle text-warning"></i>'
         }
     });
 })

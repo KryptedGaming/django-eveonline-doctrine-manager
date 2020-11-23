@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 Delete Fitting
 {% endblock %}
 
-{% block description %}
-{{object.name}}
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-list' %}">Fittings</a></li>
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-detail' object.pk %}">View Fitting</a></li>
+{% endblock %}
+
+
+{% block breadcrumb %}
+Delete Fitting
 {% endblock %}
 
 {% block content %}

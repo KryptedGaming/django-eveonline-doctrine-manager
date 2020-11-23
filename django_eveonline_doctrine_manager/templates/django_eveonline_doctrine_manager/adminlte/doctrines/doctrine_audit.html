@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block title %}
 Audit Doctrine
 {% endblock %}
 
-{% block description %}
-{{object.name}}
-<p id="{{object.pk}}" class="doctrine-id" hidden></p>
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-list' %}">Doctrines</a></li>
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-doctrines-detail' object.pk %}">View Doctrine</a></li>
+{% endblock %}
+
+
+{% block breadcrumb %}
+Audit Doctrine
 {% endblock %}
 
 
 
 {% block content %}
+<p id="{{object.pk}}" class="doctrine-id" hidden></p>
 <div class="row">
     <div class="col-md-12">
         <div class="card card-danger card-outline">
@@ -21,11 +27,11 @@ Audit Doctrine
             <div class="card-body">
                 <table class="table table-bordered table-striped dataTable">
                     <thead>
-                        <th class="col-lg-1 col-md-1 col-xs-1"></th>
-                        <th class="col-lg-3 col-md-3 col-xs-2">Character Name</th>
-                        <th class="col-lg-3 col-md-3 col-xs-2">Corporation</th>
-                        <th class="col-lg-2 col-md-2 hidden-xs">Skill Check</th>
-                        <th class="col-lg-2 col-md-2 hidden-xs">Hangar Check</th>
+                        <th></th>
+                        <th>Character Name</th>
+                        <th>Corporation</th>
+                        <th>Skill Check</th>
+                        <th>Hangar Check</th>
                     </thead>
                     <tbody>
                         {% for character in object.character_list %}
@@ -77,21 +83,6 @@ Audit Doctrine
 </script>
 
 <script>
-    var processSkillCheckObject = async function(skillCheckObject, doctrineId) {
-        id = skillCheckObject.id.slice(2);
-        const res = await fetch('/eveonline/api/skillcheck?external_id=' + id + '&doctrine_id=' + doctrineId)
-        if (res.status == 200) {
-            skillCheckObject.innerHTML = '<i title="Character has the required skills" class="fa fa-check text-success"></i>'
-        }
-        else if (res.status == 500) {
-            skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
-        }
-        else {
-            const resJSON = await res.json();
-            console.log(resJSON)
-            skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
-        }
-    };
     document.addEventListener("DOMContentLoaded", async function () {
         var doctrineId = document.querySelectorAll('.doctrine-id')[0].id
         var skillCheckObjects = document.querySelectorAll('.skillcheck')
@@ -104,7 +95,7 @@ Audit Doctrine
                 skillCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
             else if (res.status == 400) {
-                skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
+                skillCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-exclamation-triangle text-warning"></i>'
             }
             else {
                 skillCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'
@@ -119,7 +110,7 @@ Audit Doctrine
                 hangarCheckObject.innerHTML = '<i class="fa fa-check text-success"></i>'
             }
             else if (res.status == 400) {
-                hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-warning text-warning"></i>'
+                hangarCheckObject.innerHTML = '<i title="Server error when fetching API" class="fa fa-exclamation-triangle text-warning"></i>'
             }
             else {
                 hangarCheckObject.innerHTML = '<i class="fa fa-times text-danger"></i>'

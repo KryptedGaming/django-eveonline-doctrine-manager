@@ -1,7 +1,7 @@
 from django.views.generic.edit import FormView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django_eveonline_doctrine_manager.models import EveDoctrine
+from django_eveonline_doctrine_manager.models import EveDoctrine, EveDoctrineCategory, EveDoctrineManagerTag
 from django_eveonline_doctrine_manager.forms import EveDoctrineForm
 from django.urls import reverse_lazy
 """
@@ -23,6 +23,11 @@ class DoctrineListView(ListView):
     template_name = 'django_eveonline_doctrine_manager/adminlte/doctrines/doctrine_list.html'
     model = EveDoctrine 
 
+    def get_context_data(self,**kwargs):
+        context = super(DoctrineListView,self).get_context_data(**kwargs)
+        context['roles'] = EveDoctrineCategory.objects.all()
+        context['tags'] = EveDoctrineManagerTag.objects.all()
+        return context
 
 class DoctrineCreateView(FormView):
     template_name = 'django_eveonline_doctrine_manager/adminlte/doctrines/doctrine_form.html'

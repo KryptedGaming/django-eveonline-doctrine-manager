@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
-{% block header %}
+
+{% block title %}
 Fittings
 {% endblock %}
 
-{% block description %}
-Fitting Form
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'django-eveonline-doctrine-manager-fittings-list' %}">Fittings</a></li>
 {% endblock %}
 
-{% block head %}
-<link rel="stylesheet" href="{% static 'adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' %}">
+{% block breadcrumb %}
+Fitting Form
 {% endblock %}
 
 {% block content %}
@@ -36,7 +37,8 @@ Fitting Form
 <script>
     $(function () {
         // Summernote
-        $('.wysihtml5').summernote()
+        $('#id_description').summernote()
+
     })
 </script>
 {% endblock %}
