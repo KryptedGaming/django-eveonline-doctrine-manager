@@ -2,7 +2,7 @@ from django.views.generic.edit import FormView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib import messages
-from django_eveonline_doctrine_manager.models import EveFitting
+from django_eveonline_doctrine_manager.models import EveFitting, EveDoctrineRole, EveDoctrineManagerTag
 from django_eveonline_doctrine_manager.forms import EveFittingForm
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
@@ -21,6 +21,13 @@ class FittingAuditView(DetailView):
 class FittingListView(ListView):
     template_name = 'django_eveonline_doctrine_manager/adminlte/fittings/fitting_list.html'
     model = EveFitting 
+    queryset = EveFitting.objects.filter(refit_of=None)
+
+    def get_context_data(self,**kwargs):
+        context = super(FittingListView,self).get_context_data(**kwargs)
+        context['roles'] = EveDoctrineRole.objects.all()
+        context['tags'] = EveDoctrineManagerTag.objects.all()
+        return context
 
 class FittingCreateView(FormView):
     template_name = 'django_eveonline_doctrine_manager/adminlte/fittings/fitting_form.html'
