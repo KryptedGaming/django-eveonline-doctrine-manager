@@ -67,26 +67,28 @@ Fittings
                     <td class="text-center">
                         <img class="img-circle" src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32"
                             title="{{fitting.ship_name}}" width="32px">
+                        <!-- Hiding Tags in Column 1-->
                         <div hidden>
                             {% for role in fitting.roles.all %}
                             <span class="badge badge-{{role.color}}">
                             {{role}}
                             </span>
                             {% endfor %}
-
+                        </div>
+                        <!-- Hiding Tags in Column 2-->
+                        <div hidden>
                             {% for tag in fitting.tags.all %}
                             <p hidden>
                                 {{tag}}
                             </p>
                             {% endfor %}
                         </div>
-                        </td>
+                    </td>
                     
                     <td>
                         <p>
                             {{fitting.name}}
                         </p>
-                        
                     </td>
                     
                     <td >
@@ -118,27 +120,22 @@ Fittings
 <script>
 $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
-        let roleSelectData = $('#roleFilter').select2('data')
         
-        let tagSelectData = $('#tagFilter').select2('data')
-        
-        
-        let selectData = roleSelectData.concat(tagSelectData)
+        let roleList = $('#roleFilter').select2('data').map(function(item) { return item.id; });
+        let tagList = $('#tagFilter').select2('data').map(function(item) { return item.id; });
 
-        if (selectData.length === 0) {
-            console.log('default true')
-            return true;
+        let roleRegexCheck = new RegExp(roleList.join("|"));
+        let tagRegexCheck = new RegExp(tagList.join("|"));
+
+        if (!roleRegexCheck.test(data[0])) {
+            return false; 
         }
-    
-        let includes = true; 
-        for (selection in selectData) {
-            
-            let role = selectData[selection];
-            if (!data[0].includes(role.id)) {
-                includes = false;
-            } 
+
+        if (!tagRegexCheck.test(data[0])) {
+            return false; 
         }
-        return includes; 
+
+        return true;
     }
 );
 
