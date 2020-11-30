@@ -2,7 +2,7 @@
 
 {% block title %}
 Fittings
-<button class="btn btn-default float-right" onclick="toggleStocked(this)">Show Stocked</button>
+
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -16,20 +16,22 @@ View Market Rules
 {% block content %}
 <div class="card card-primary card-outline">
     <div class="card-header">
-        <h3 class="card-title">
+        <h3 class="card-title float-left">
             Market Rule Table
+            
         </h3>
         
     </div>
     <div class="card-body">
+        <button class="btn btn-default" onclick="toggleStocked(this)">Show Stocked</button>
             <table class="table table-bordered table-striped dataTable">
                 <thead>
                     <th></th>
                     <th>Fitting</th>
-                    <th class="d-none d-sm-block">Location</th>
-                    <th>Desired Stock</th>
-                    <th>Current Stock</th>
-                    <th class="d-none d-sm-block">Actions</th>
+                    <th class="d-none d-sm-table-cell">Location</th>
+                    <th class="d-none d-sm-table-cell">Desired</th>
+                    <th>Current</th>
+                    <th class="d-none d-sm-table-cell">Actions</th>
 
                 </thead>
                 <tbody>
@@ -44,11 +46,13 @@ View Market Rules
                                 src="https://images.evetech.net/types/{{fitting_rule.fitting.ship_id}}/icon?size=32"
                                 title="{{fitting_rule.fitting.ship_name}}" width="24px"></td>
                         <td>{{fitting_rule.fitting.name}}</td>
-                        <td class="d-none d-sm-block">{{fitting_rule.structure.name}}</td>
-                        <td>{{fitting_rule.requested_stock}}</td>
+                        <td class="d-none d-sm-table-cell">
+                            <p>{{fitting_rule.structure.name}}</p>
+                        </td>
+                        <td class="d-none d-sm-table-cell">{{fitting_rule.requested_stock}}</td>
                         <td>{{fitting_rule.current_stock}}</td>
                         
-                        <td class="d-none d-sm-block">
+                        <td class="d-none d-sm-table-cell">
                             {% if fitting_rule.current_stock < fitting_rule.requested_stock %}
                             <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#modal_{{fitting_rule.pk}}">
                                 Restock
@@ -103,11 +107,11 @@ View Market Rules
     async function toggleStocked(button) {
         if (button.innerHTML === "Show Stocked") {
             button.innerHTML = "Hide Stocked"
-            button.classList = "btn btn-warning float-right"
+            button.classList = "btn btn-warning"
         }
         else {
             button.innerHTML = "Show Stocked"
-            button.classList = "btn btn-default float-right"
+            button.classList = "btn btn-default"
         }
         stockedRows = document.querySelectorAll('.stocked')
         stockedRows.forEach(element => {
@@ -116,7 +120,7 @@ View Market Rules
         
     }
     async function pullContracts(button) {
-        button.classList = "btn btn-danger float-right"
+        button.classList = "btn btn-danger"
         button.disabled = true 
         button.innerHTML = '<i class="fa fa-1x fa-spinner fa-spin" aria-hidden="true"></i>'
         location.href = "{% url 'django-eveonline-doctrine-manager-fittings-stock' %}";
