@@ -17,7 +17,10 @@ def parse_eft_format(fitting):
         'cargo': [],
     }
 
-    regex_pattern = "(?P<type_name>[[A-Za-z0-9\-_' ]*(?<![x0-9]))(?P<loaded>,.*)?(?P<quantity>x[0-9]*)?"
+    regex_pattern = "(?P<type_name>[[A-Za-z0-9\._' -]*(?<![x0-9]))(?P<loaded>,.*)?(?P<quantity>x[0-9]*)?"
+    quantity_regex_pattern = "^.*(x[0-9]*)$"
+    loaded_regex_pattern = ".*(,.*)"
+
 
     fitting = fitting.fitting.splitlines()
     fitting.reverse()
@@ -45,12 +48,20 @@ def parse_eft_format(fitting):
         if 'Empty' in line or not line:
             continue
 
-        results = re.search(regex_pattern, line)
-        try:
-            type_name = results.group('type_name').rstrip()
-            quantity = results.group('quantity')
-        except IndexError as e:
-            pass  # just means no quantity
+        # strip quantity
+        if re.match(quantity_regex_pattern, line):
+            quantity = re.search(quantity_regex_pattern, line).group(1)
+            line = line[:-len(quantity)]
+        else:
+            quantity = "x1"
+
+        if re.match(loaded_regex_pattern, line):
+            loaded = re.search(loaded_regex_pattern, line).group(1)
+            line = line[:-len(loaded)]
+        else:
+            loaded = None 
+
+        type_name = line.rstrip()
         type_id = resolve_type_name_to_type_id(type_name)
         category = resolve_type_id_to_category_name(type_id)
         if case == 4 and category == 'Drone':
