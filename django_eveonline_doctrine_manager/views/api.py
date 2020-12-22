@@ -52,9 +52,11 @@ def get_character_fittings(request):
     try:
         character = EveCharacter.objects.get(external_id=request.GET['external_id'])
         report = character.evecharacterdoctrinereport.get_report()['fittings']
-    except Exception as e:
-        logger.warning(e)
+    except EveCharacter.evecharacterdoctrinereport.RelatedObjectDoesNotExist as e:
         return HttpResponse(status=404)
+    except Exception as e:
+        logger.exception(e)
+        return HttpResponse(status=500)
 
     if user.has_perm("django_eveonline_doctrine_manager.view_evecharacterdoctrinereport") or character.token.user == user:
         fittings = [] 
@@ -81,9 +83,11 @@ def get_character_doctrines(request):
         character = EveCharacter.objects.get(
             external_id=request.GET['external_id'])
         report = character.evecharacterdoctrinereport.get_report()['doctrines']
-    except Exception as e:
-        logger.warning(e)
+    except EveCharacter.evecharacterdoctrinereport.RelatedObjectDoesNotExist as e:
         return HttpResponse(status=404)
+    except Exception as e:
+        logger.exception(e)
+        return HttpResponse(status=500)
 
     if user.has_perm("django_eveonline_doctrine_manager.view_evecharacterdoctrinereport") or character.token.user == user:
         objects = []
