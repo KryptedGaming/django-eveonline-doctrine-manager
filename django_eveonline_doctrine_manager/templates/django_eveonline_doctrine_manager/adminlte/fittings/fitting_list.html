@@ -49,6 +49,15 @@ Fittings
                     </select>
                     </select>
                 </div>
+                <div class="col">
+                    <h6>Filter by Doctrine</h5>
+                    <select id="doctrineFilter" class="select2 w-100 p-3" name="states[]" multiple="multiple">
+                        {% for doctrine in doctrines %}
+                        <option value="{{doctrine}}">{{doctrine}}</option>
+                        {% endfor %}
+                    </select>
+                    </select>
+                </div>
             </div>
             
         </div>
@@ -67,7 +76,7 @@ Fittings
                     <td class="text-center">
                         <img class="img-circle" src="https://images.evetech.net/types/{{fitting.ship_id}}/icon?size=32"
                             title="{{fitting.ship_name}}" width="32px">
-                        <!-- Hiding Tags in Column 1-->
+                        <!-- Hiding Roles in Column -->
                         <div hidden>
                             {% for role in fitting.roles.all %}
                             <span class="badge badge-{{role.color}}">
@@ -75,11 +84,19 @@ Fittings
                             </span>
                             {% endfor %}
                         </div>
-                        <!-- Hiding Tags in Column 2-->
+                        <!-- Hiding Tags in Column -->
                         <div hidden>
                             {% for tag in fitting.tags.all %}
                             <p hidden>
                                 {{tag}}
+                            </p>
+                            {% endfor %}
+                        </div>
+                        <!-- Hiding Doctrines in Column -->
+                        <div hidden>
+                            {% for doctrine in fitting.doctrines.all %}
+                            <p hidden>
+                                {{doctrine.name}}
                             </p>
                             {% endfor %}
                         </div>
@@ -123,9 +140,11 @@ $.fn.dataTable.ext.search.push(
         
         let roleList = $('#roleFilter').select2('data').map(function(item) { return item.id; });
         let tagList = $('#tagFilter').select2('data').map(function(item) { return item.id; });
+        let doctrineList= $('#doctrineFilter').select2('data').map(function(item) { return item.id; });
 
         let roleRegexCheck = new RegExp(roleList.join("|"));
         let tagRegexCheck = new RegExp(tagList.join("|"));
+        let doctrineRegexCheck = new RegExp(doctrineList.join("|"));
 
         if (!roleRegexCheck.test(data[0])) {
             return false; 
@@ -133,6 +152,10 @@ $.fn.dataTable.ext.search.push(
 
         if (!tagRegexCheck.test(data[0])) {
             return false; 
+        }
+
+        if (!doctrineRegexCheck.test(data[0])) {
+            return false;
         }
 
         return true;
