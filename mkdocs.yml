@@ -1,0 +1,19 @@
+# Information
+site_name: 'Django Package'
+site_description: 'A Django package using the Krypted Gaming Template'
+site_url: 'https://github.com/KryptedGaming/django-eveonline-doctrine-manager'
+
+# Repository
+repo_name: 'KryptedGaming/django-eveonline-doctrine-manager'
+repo_url: 'https://github.com/KryptedGaming/django-eveonline-doctrine-manager'
+
+# Theme Configuration
+theme:
+    name: 'material'
+    palette:
+        primary: 'blue'
+        accent: 'white'
+
+# Navigation 
+nav:
+    - Overview: index.md

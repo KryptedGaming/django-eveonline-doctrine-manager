@@ -1,24 +1,34 @@
 import os
 from setuptools import find_packages, setup
 
+install_requires = [
+    'django>=2.2.13',
+    'celery>=4.0.2',
+    'django-singleton-admin-2>=1.1.0',
+    'roman',
+    'django_eveonline_connector',
+    'django-crispy-forms',
+]
+
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
+settings = __import__('django_eveonline_doctrine_manager')
 setup(
-    name='django-eveonline-doctrine-manager',
-    version=__import__('django_eveonline_doctrine_manager').__version__,
+    name=settings.__package_name__,
+    version=settings.__version__,
     packages=find_packages(),
     include_package_data=True,
-    license='MIT License',
-    description='A simple Django package.',
+    license=settings.__license__,
+    description=settings.__description__,
     long_description=README,
     long_description_content_type='text/markdown',
-    url='https://github.com/KryptedGaming/django-eveonline-doctrine-manager.git',
-    author='django_eveonline_doctrine_manager',
-    author_email='porowns@gmail.com',
+    url=settings.__github_url__,
+    author=settings.__author__,
+    author_email=settings.__author_email__,
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
@@ -31,10 +41,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
-    install_requires=[
-        'roman',
-        'django_eveonline_connector',
-        'django-crispy-forms',
-        'django-singleton-admin-2',
-    ]
+    install_requires=install_requires
 )

@@ -1,0 +1,23 @@
+[run]
+branch = True
+source =
+    django_eveonline_doctrine_manager
+
+omit =
+    */django_eveonline_doctrine_manager/migrations/*
+    */tests/*
+    */.tox/*
+    */bin/*
+    */test/*
+    runtests.py
+
+[report]
+exclude_lines =
+    if self.debug:
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    def __repr__
+    raise AssertionError
+
+ignore_errors = True
