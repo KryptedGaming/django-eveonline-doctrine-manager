@@ -10,7 +10,7 @@ from .api import FittingView
 urlpatterns = []
 
 urlpatterns += [
-    path('api/v2/hello/', FittingView.as_view(), name='hello'),
+    path('api/v2/fittings', FittingView.as_view(), name='v2-get-fittings'),
 ]
 
 urlpatterns += [
